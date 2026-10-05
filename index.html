@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ツールデータ変換</title>
+<!-- 文字の書体：本文は Zen Maru Gothic、見出しとボタンは M PLUS Rounded 1c(ツールの index.html と同じ)。インターネットにつながっていないときは、パソコンに入っている書体で表示します。 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --bg:#FAF6EC; --surface:#FFFFFF; --surface-alt:#F1EADA; --text:#2E2A22; --muted:#7A7160;
+    --primary:#3E7C59; --primary-strong:#2C5B40; --primary-soft:#DCEBE0;
+    --accent:#E8793A; --accent-strong:#C7601F; --accent-soft:#FBDDBF; --danger:#C15B4A; --danger-soft:#F6DDD8;
+    --warn-soft:#FBEFC8; --border:#E4DAC3;
+    --idx:#4F6FA8; --idx-strong:#3A5484; --idx-soft:#D6E0F1;
+    --font-body:"Zen Maru Gothic","Hiragino Maru Gothic ProN","M PLUS Rounded 1c",sans-serif;
+    --font-head:"M PLUS Rounded 1c",sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.75;}
+  .wrap{max-width:960px;margin:0 auto;padding:24px 16px 80px;}
+  h1{font-family:var(--font-head);font-size:28px;font-weight:800;margin:0 0 4px;color:var(--primary-strong);}
+  .lead{margin:0 0 20px;color:var(--muted);}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin:0 0 18px;}
+  .card h2{font-family:var(--font-head);font-size:20px;font-weight:800;margin:0 0 10px;display:flex;align-items:center;gap:10px;}
+  .card.lang h2 .no{background:var(--accent);}
+  .card.lang{border-color:var(--accent-soft);}
+  .card.idx h2 .no{background:var(--idx);}
+  .card.idx{border-color:var(--idx-soft);}
+  .no{font-family:var(--font-head);display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;font-weight:800;font-size:17px;flex:none;}
+  ol{margin:6px 0 12px;padding-left:1.6em;}
+  li{margin:2px 0;}
+  code,kbd{font-family:var(--font-body);background:var(--surface-alt);border:1px solid var(--border);border-radius:6px;padding:0 6px;font-size:.92em;overflow-wrap:anywhere;}
+  kbd{background:#fff;border-bottom-width:2px;font-weight:500;}
+  button{font-family:var(--font-head);font-size:16px;font-weight:800;border-radius:10px;border:1px solid var(--primary);background:var(--primary);color:#fff;padding:10px 18px;cursor:pointer;}
+  button:hover{background:var(--primary-strong);}
+  button.lang{background:var(--accent);border-color:var(--accent);}
+  button.lang:hover{background:var(--accent-strong);}
+  button.idx{background:var(--idx);border-color:var(--idx);}
+  button.idx:hover{background:var(--idx-strong);}
+  button.sub{background:#fff;color:var(--primary-strong);font-weight:500;}
+  button.sub:hover{background:var(--primary-soft);}
+  button:disabled,button.lang:disabled,button.idx:disabled{background:#C9C2B2;border-color:#C9C2B2;color:#fff;cursor:not-allowed;}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0;}
+  .files{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:center;margin:10px 0;}
+  .files button{white-space:nowrap;}
+  .status{padding:8px 12px;border-radius:10px;background:var(--surface-alt);font-size:15px;}
+  .status.ok{background:var(--primary-soft);color:var(--primary-strong);}
+  .status.ng{background:var(--danger-soft);color:#8E2F22;}
+  .box{border-radius:10px;padding:10px 14px;margin:10px 0;}
+  .box h3{font-family:var(--font-head);margin:0 0 4px;font-size:16px;font-weight:800;}
+  .box ul{margin:4px 0;padding-left:1.4em;}
+  .box.err{background:var(--danger-soft);border:1px solid var(--danger);color:#6E241A;}
+  .box.warn{background:var(--warn-soft);border:1px solid #D9B23C;color:#5E4300;}
+  .box.ok{background:var(--primary-soft);border:1px solid var(--primary);color:var(--primary-strong);}
+  .box.info{background:var(--surface-alt);border:1px solid var(--border);}
+  .tag{display:inline-block;border-radius:6px;padding:0 8px;font-size:13px;font-weight:700;margin-right:6px;color:#fff;}
+  .tag.new{background:var(--primary);} .tag.chg{background:var(--accent);} .tag.del{background:var(--danger);}
+  .item{margin:2px 0;}
+  .detail{font-size:14px;color:#4A4436;margin:0 0 6px 6px;}
+  .plus{color:var(--primary-strong);font-weight:500;} .minus{color:#8E2F22;font-weight:500;}
+  details{margin:8px 0;}
+  summary{cursor:pointer;color:var(--primary-strong);font-weight:700;}
+  table{border-collapse:collapse;font-size:15px;margin:8px 0;}
+  th,td{border:1px solid var(--border);padding:3px 12px;text-align:left;}
+  th{background:var(--surface-alt);font-weight:700;}
+  td.n{text-align:right;} td.hit{font-weight:700;background:#FFF6E4;}
+  .muted{color:var(--muted);font-size:14px;}
+  .hidden{display:none;}
+  label.chk{display:flex;gap:8px;align-items:flex-start;font-weight:500;margin:8px 0;}
+  label.chk input{width:20px;height:20px;margin-top:4px;flex:none;}
+  .drop{outline:3px dashed var(--primary);outline-offset:4px;}
+  input[type=file]{display:none;}
+  .method{border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin:12px 0;background:#FFFDF8;}
+  .method h3{font-family:var(--font-head);font-size:17px;font-weight:800;margin:0 0 6px;}
+  .method h4{font-family:var(--font-head);font-size:16px;font-weight:800;margin:14px 0 4px;}
+  details.alt{margin-top:14px;border-top:1px dashed var(--border);padding-top:8px;}
+  pre.code{background:#2E2A22;color:#F8F3E6;border-radius:10px;padding:10px 12px;margin:8px 0;overflow-x:auto;font-size:13px;line-height:1.6;white-space:pre;font-family:Consolas,"BIZ UDGothic","MS Gothic",monospace;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>ツールデータ変換</h1>
+  <p class="lead">Excel(<code>ぽこあマスタデータ.xlsx</code>)から、<code>data.js</code>(ポケモン・家具・施設)、<code>lang.js</code>(翻訳)、<code>index.html</code>(お知らせ・このツールについて・使い方・Q&amp;A・検証の表)を、作り直すページです。足した分・変わった分を、表示して確かめられます。ファイルを選んだだけでは、何も始まりません。「変換する」ボタンを押したときに、はじめて変換します。このページは、あなたのパソコンの中だけで動きます(データは、どこにも送られません。Claude も使いません)。</p>
+
+  <div class="card">
+    <h2>はじめに(先にやっておくこと)</h2>
+    <ol>
+      <li>Excel を開いているときは、<kbd>Ctrl</kbd>(コントロール)キーを押しながら <kbd>S</kbd> キーを押して、保存しておきます(このページは、保存されている内容を読みます)。</li>
+      <li><code>data.js</code>・<code>lang.js</code>・<code>index.html</code> のバックアップ(元に戻せるように取っておく、ファイルの写しのことです)を、<code>C:\Users\Owner\Downloads\求職活動\PP\01_マスタデータ・ツール\BU</code> フォルダに取っておきます。</li>
+    </ol>
+  </div>
+
+  <div class="card" id="card1">
+    <h2><span class="no">1</span>4つのファイルを選ぶ</h2>
+    <p>下のボタンで、1つずつ選びます。4つのファイルを、エクスプローラー(Windows でファイルやフォルダを見るための画面のことです)から、このページの上まで、まとめてドラッグして放しても、選べます。</p>
+    <div class="files">
+      <button id="pickX" type="button">Excel を選ぶ</button><div class="status" id="stX">まだ、選ばれていません。<span class="muted">(<code>C:\Users\Owner\Downloads\求職活動\PP\01_マスタデータ・ツール</code> フォルダの <code>ぽこあマスタデータ.xlsx</code>)</span></div>
+      <button id="pickD" type="button">data.js を選ぶ</button><div class="status" id="stD">まだ、選ばれていません。<span class="muted">(<code>C:\Users\Owner\Downloads\求職活動\PP\01_マスタデータ・ツール\ぽこあ最適施設診断ツール</code> フォルダの <code>data.js</code>)</span></div>
+      <button id="pickL" class="lang" type="button">lang.js を選ぶ</button><div class="status" id="stL">まだ、選ばれていません。<span class="muted">(<code>data.js</code> と同じフォルダの <code>lang.js</code>)</span></div>
+      <button id="pickI" class="idx" type="button">index.html を選ぶ</button><div class="status" id="stI">まだ、選ばれていません。<span class="muted">(<code>data.js</code> と同じフォルダの <code>index.html</code>)</span></div>
+    </div>
+    <input type="file" id="fileX" accept=".xlsx,.xlsm">
+    <input type="file" id="fileD" accept=".js,text/javascript">
+    <input type="file" id="fileL" accept=".js,text/javascript">
+    <input type="file" id="fileI" accept=".html,.htm,text/html">
+    <p class="muted">Excel と、ほかの3つのうちの一部だけを選んでも、その分だけ調べられます。お知らせ・このツールについて・使い方・Q&amp;A・検証の表を直したときは、<code>lang.js</code>(翻訳が入ります)と <code>index.html</code>(文が入ります)の、両方を選びます。</p>
+    <p class="muted">ここでは、ファイルを読み込むだけです。間違えて選んだときは、同じボタンで、正しいファイルを選び直せます。</p>
+  </div>
+
+  <div class="card" id="card2">
+    <h2><span class="no">2</span>「変換する」ボタンを押して、足した分・変わった分を、確かめる</h2>
+    <p>下の「変換する」ボタンをクリックすると、Excel の内容から新しい中身を作って、いまのファイルと見比べます。<b>このボタンを押しても、パソコンの中のファイルは、書きかわりません</b>(新しいファイルは、下の「3」「4」「5」の「ファイルとして保存する」ボタンを押したときにだけ、ダウンロードのフォルダにできます)。</p>
+    <div class="row"><button id="convert" type="button" disabled>変換する</button></div>
+    <div class="status" id="stC">手順1で、Excel を選ぶと、ボタンが押せるようになります。</div>
+    <div id="result"><p class="muted">手順1でファイルを選んでから、上の「変換する」ボタンを押すと、ここに結果が出ます。</p></div>
+  </div>
+
+  <div class="card" id="cardD">
+    <h2><span class="no">3</span>data.js を、新しいファイルに入れかえる</h2>
+    <div id="confD" class="hidden"><label class="chk"><input type="checkbox" id="chkD"><span>上の「消えるもの」を確かめました。<code>data.js</code> から消えて、かまいません。</span></label></div>
+    <div class="row"><button id="dlD" type="button" disabled>新しい data.js を、ファイルとして保存する</button></div>
+    <div class="status" id="st3">手順2で、<code>data.js</code> に変更があるときに、ボタンが押せるようになります。</div>
+    <ol>
+      <li>上の「新しい data.js を、ファイルとして保存する」ボタンをクリックします。新しい <code>data.js</code> が、ダウンロードのフォルダ(<code>C:\Users\Owner\Downloads</code>)に、保存されます。</li>
+      <li>エクスプローラーで、ダウンロードのフォルダ(<code>C:\Users\Owner\Downloads</code>)を開きます。</li>
+      <li>いま保存された <code>data.js</code> を、左ボタンで1回クリックして、<kbd>Ctrl</kbd> キーを押しながら <kbd>X</kbd> キーを押します(切り取り。ファイルを、別の場所へ移すための操作です)。</li>
+      <li>エクスプローラーで、<code>C:\Users\Owner\Downloads\求職活動\PP\01_マスタデータ・ツール\ぽこあ最適施設診断ツール</code> フォルダを開きます。</li>
+      <li>ファイルが並んでいるところの、何もないところを、左ボタンで1回クリックして、<kbd>Ctrl</kbd> キーを押しながら <kbd>V</kbd> キーを押します(貼り付け)。</li>
+      <li>「ファイルの置換またはスキップ」という窓が出るので、「ファイルを置き換える」をクリックします(古い <code>data.js</code> が、新しい <code>data.js</code> に、入れかわります)。</li>
+    </ol>
+    <p class="muted">手順1で保存されたファイルの名前が、<code>data (1).js</code> のようになっているときは、ダウンロードのフォルダに、前の <code>data.js</code> が残っています。古い <code>data.js</code> を、クリックして <kbd>Delete</kbd> キーで削除し、<code>data (1).js</code> を、クリックして <kbd>F2</kbd> キーを押し、名前を <code>data.js</code> に直してから、手順3に進みます。</p>
+    <details class="alt"><summary>ファイルとして保存できないとき(メモ帳に貼り付ける方法)</summary>
+      <div class="row"><button class="sub" id="copyD" type="button" disabled>新しい data.js の中身を、コピーする</button></div>
+      <ol>
+        <li>上の「新しい data.js の中身を、コピーする」ボタンをクリックします。</li>
+        <li>エクスプローラーで、<code>C:\Users\Owner\Downloads\求職活動\PP\01_マスタデータ・ツール\ぽこあ最適施設診断ツール</code> フォルダを開きます。</li>
+        <li><code>data.js</code> を右クリックして、「プログラムから開く」→「メモ帳」をクリックします。</li>
+        <li>メモ帳の、文字が書いてあるところをクリックして、<kbd>Ctrl</kbd> キーを押しながら <kbd>A</kbd> キーを押します(中身が、全部選ばれます)。</li>
+        <li><kbd>Ctrl</kbd> キーを押しながら <kbd>V</kbd> キーを押します(貼り付け。古い中身が、新しい中身に入れかわります)。</li>
+        <li>いちばん上の行に、「データ専用ファイル(data.js)」と書いてあることを確かめます(<code>lang.js</code> の中身と、取りちがえていないかの確認です)。</li>
+        <li><kbd>Ctrl</kbd> キーを押しながら <kbd>S</kbd> キーを押します(保存)。メモ帳を閉じます。</li>
+      </ol>
+    </details>
+  </div>
+
+  <div class="card lang" id="cardL">
+    <h2><span class="no">4</span>lang.js を、新しいファイルに入れかえる</h2>
+    <div id="confL" class="hidden"><label class="chk"><input type="checkbox" id="chkL"><span>上の「消えるもの」を確かめました。<code>lang.js</code> から消えて、かまいません。</span></label></div>
+    <div class="row"><button id="dlL" class="lang" type="button" disabled>新しい lang.js を、ファイルとして保存する</button></div>
+    <div class="status" id="st4">手順2で、<code>lang.js</code> に変更があるときに、ボタンが押せるようになります。</div>
+    <ol>
+      <li>上の「新しい lang.js を、ファイルとして保存する」ボタンをクリックします。新しい <code>lang.js</code> が、ダウンロードのフォルダ(<code>C:\Users\Owner\Downloads</code>)に、保存されます。</li>
+      <li>エクスプローラーで、ダウンロードのフォルダ(<code>C:\Users\Owner\Downloads</code>)を開きます。</li>
+      <li>いま保存された <code>lang.js</code> を、左ボタンで1回クリックして、<kbd>Ctrl</kbd> キーを押しながら <kbd>X</kbd> キーを押します(切り取り。ファイルを、別の場所へ移すための操作です)。</li>
+      <li>エクスプローラーで、<code>C:\Users\Owner\Downloads\求職活動\PP\01_マスタデータ・ツール\ぽこあ最適施設診断ツール</code> フォルダを開きます。</li>
+      <li>ファイルが並んでいるところの、何もないところを、左ボタンで1回クリックして、<kbd>Ctrl</kbd> キーを押しながら <kbd>V</kbd> キーを押します(貼り付け)。</li>
+      <li>「ファイルの置換またはスキップ」という窓が出るので、「ファイルを置き換える」をクリックします(古い <code>lang.js</code> が、新しい <code>lang.js</code> に、入れかわります)。</li>
+      <li>お知らせ・このツールについて・使い方・Q&amp;A・検証の表を直したときは、続けて、下の「5」に進みます。直していないときは、<code>index.html</code> を、ブラウザで開き直して、新しいポケモン・家具・施設が出るか、言語を切りかえて、日本語のままの名前がないかを、確かめます。</li>
+    </ol>
+    <p class="muted">手順1で保存されたファイルの名前が、<code>lang (1).js</code> のようになっているときは、ダウンロードのフォルダに、前の <code>lang.js</code> が残っています。古い <code>lang.js</code> を、クリックして <kbd>Delete</kbd> キーで削除し、<code>lang (1).js</code> を、クリックして <kbd>F2</kbd> キーを押し、名前を <code>lang.js</code> に直してから、手順3に進みます。</p>
+    <details class="alt"><summary>ファイルとして保存できないとき(メモ帳に貼り付ける方法)</summary>
+      <div class="row"><button class="sub" id="copyL" type="button" disabled>新しい lang.js の中身を、コピーする</button></div>
+      <ol>
+        <li>上の「新しい lang.js の中身を、コピーする」ボタンをクリックします。</li>
+        <li><code>C:\Users\Owner\Downloads\求職活動\PP\01_マスタデータ・ツール\ぽこあ最適施設診断ツール</code> フォルダの <code>lang.js</code> を右クリックして、「プログラムから開く」→「メモ帳」をクリックします。</li>
+        <li>メモ帳の中をクリックして、<kbd>Ctrl</kbd> + <kbd>A</kbd>(全部選ぶ)→ <kbd>Ctrl</kbd> + <kbd>V</kbd>(貼り付け)の順に押します。</li>
+        <li>いちばん上の行に、「言語データ専用ファイル(lang.js)」と書いてあることを確かめます。</li>
+        <li><kbd>Ctrl</kbd> + <kbd>S</kbd>(保存)を押して、メモ帳を閉じます。</li>
+      </ol>
+    </details>
+  </div>
+
+  <div class="card idx" id="cardI">
+    <h2><span class="no">5</span>index.html を直す(お知らせ・このツールについて・使い方・Q&amp;A・検証の表)</h2>
+    <p>方法Aと方法Bの、<b>どちらか片方だけ</b>を行います(方法Aのあとに、方法Bも行うと、同じ行が、2つ入ってしまいます)。翻訳は、<code>index.html</code> ではなく、<code>lang.js</code> に入ります(上の「4」で入ります)。</p>
+    <div class="method">
+      <h3>方法A(おすすめ)：index.html を、新しいファイルに、まるごと入れかえる</h3>
+      <div id="confI" class="hidden"><label class="chk"><input type="checkbox" id="chkI"><span>上の「消えるもの」を確かめました。<code>index.html</code> から消えて、かまいません。</span></label></div>
+      <div class="row"><button id="dlI" class="idx" type="button" disabled>新しい index.html を、ファイルとして保存する</button></div>
+      <div class="status" id="st5">手順2で、<code>index.html</code> に変更があるときに、ボタンが押せるようになります。</div>
+      <ol>
+        <li>上の「新しい index.html を、ファイルとして保存する」ボタンをクリックします。新しい <code>index.html</code> が、ダウンロードのフォルダ(<code>C:\Users\Owner\Downloads</code>)に、保存されます。</li>
+        <li>エクスプローラーで、ダウンロードのフォルダ(<code>C:\Users\Owner\Downloads</code>)を開きます。</li>
+        <li>いま保存された <code>index.html</code> を、左ボタンで1回クリックして、<kbd>Ctrl</kbd> キーを押しながら <kbd>X</kbd> キーを押します(切り取り。ファイルを、別の場所へ移すための操作です)。</li>
+        <li>エクスプローラーで、<code>C:\Users\Owner\Downloads\求職活動\PP\01_マスタデータ・ツール\ぽこあ最適施設診断ツール</code> フォルダを開きます。</li>
+        <li>ファイルが並んでいるところの、何もないところを、左ボタンで1回クリックして、<kbd>Ctrl</kbd> キーを押しながら <kbd>V</kbd> キーを押します(貼り付け)。</li>
+        <li>「ファイルの置換またはスキップ」という窓が出るので、「ファイルを置き換える」をクリックします(古い <code>index.html</code> が、新しい <code>index.html</code> に、入れかわります)。</li>
+        <li><code>index.html</code> を、ダブルクリックして、ブラウザで開きます(すでに開いているときは、<kbd>F5</kbd> キーで読み込み直します)。画面の右上の「⋮」→「お知らせ」で、足したお知らせが、いちばん上に出ることを確かめます。「このツールについて」「使い方」「Q&amp;A」を直したときは、「⋮」から、それぞれの画面を開いて、確かめます。検証の表は、「⋮」→「このツールについて」→「家具属性の検証について」の右の「＋詳細」で、確かめます。</li>
+        <li>「⋮」→「言語 / Language」で、ほかの言語に切りかえて、足した文・直した文が、日本語のままになっていないことを確かめます。</li>
+      </ol>
+      <p class="muted">手順1で保存されたファイルの名前が、<code>index (1).html</code> のようになっているときは、ダウンロードのフォルダに、前の <code>index.html</code> が残っています。古い <code>index.html</code> を、クリックして <kbd>Delete</kbd> キーで削除し、<code>index (1).html</code> を、クリックして <kbd>F2</kbd> キーを押し、名前を <code>index.html</code> に直してから、手順3に進みます。</p>
+      <details class="alt"><summary>ファイルとして保存できないとき(メモ帳に貼り付ける方法)</summary>
+        <div class="row"><button class="sub" id="copyI" type="button" disabled>新しい index.html の中身を、コピーする</button></div>
+        <ol>
+          <li>上の「新しい index.html の中身を、コピーする」ボタンをクリックします。</li>
+          <li><code>C:\Users\Owner\Downloads\求職活動\PP\01_マスタデータ・ツール\ぽこあ最適施設診断ツール</code> フォルダの <code>index.html</code> を右クリックして、「プログラムから開く」→「メモ帳」をクリックします(ダブルクリックすると、ブラウザで開いてしまうので、右クリックから開きます)。</li>
+          <li>メモ帳の中をクリックして、<kbd>Ctrl</kbd> + <kbd>A</kbd>(全部選ぶ)→ <kbd>Ctrl</kbd> + <kbd>V</kbd>(貼り付け)の順に押します。</li>
+          <li>いちばん上の行が、<code>&lt;!DOCTYPE html&gt;</code> であることを確かめます(<code>data.js</code> や <code>lang.js</code> の中身と、取りちがえていないかの確認です)。</li>
+          <li><kbd>Ctrl</kbd> + <kbd>S</kbd>(保存)を押して、メモ帳を閉じます。</li>
+        </ol>
+      </details>
+    </div>
+    <div class="method">
+      <h3>方法B：足す行だけを、自分で貼り付ける</h3>
+      <div id="manual"><p class="muted">手順1で、Excel と <code>index.html</code> を選んで、手順2の「変換する」ボタンを押すと、ここに、貼り付ける行(コード)と、貼る場所が出ます。</p></div>
+    </div>
+  </div>
+
+  <div class="card" id="cardV">
+    <h2>入れかえが終わったら(正しく入れかわったかを、確かめる)</h2>
+    <ol>
+      <li>下の「最初からやり直す」ボタンをクリックします。</li>
+      <li>「1」で、もう一度、Excel と、入れかえたあとの <code>data.js</code>・<code>lang.js</code>・<code>index.html</code> を選びます。</li>
+      <li>「2」の「変換する」ボタンをクリックします。</li>
+      <li>「2」に、入れかえたファイルが、どれも「変更は、ありません」と出れば、正しく入れかわっています。</li>
+    </ol>
+    <div class="row"><button class="sub" id="reset" type="button">最初からやり直す</button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var ENVS = ["あかるい", "くらい", "すずしい", "あたたかい", "うるおっている", "乾そうしている"];
+  var FENVS = ["照明", "冷房", "暖房", "潤い", "庇"];
+  var state = { x:null, d:null, l:null, i:null, out:{ d:null, l:null, i:null }, manual:{}, seq:0, done:false };
+  var FILES = { d:"data.js", l:"lang.js", i:"index.html" }, STEP = { "data.js":"3", "lang.js":"4", "index.html":"5" };
+
+  // ---------- 小さな道具 ----------
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function nk(t){ t = String(t); return t.normalize ? t.normalize("NFKC") : t; }
+  function fmt(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+  // セルの値を文字にする(空は空文字。数字の 0 も、空として扱う)
+  function S(v){
+    if (v === null || v === undefined) return "";
+    if (typeof v === "number") return v === 0 ? "" : String(v);
+    return String(v).replace(/^[\s\u3000]+|[\s\u3000]+$/g, "");
+  }
+  // 数字に見えるものは数字に、空は null に、それ以外は文字のまま
+  function num(v){
+    var t = S(v);
+    if (t === "") return null;
+    if (/^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/.test(t)) return parseFloat(t);
+    return t;
+  }
+  // data.js・lang.js と同じ書式で、1件を1行の文字にする
+  function dump(v){
+    if (v === null || v === undefined) return "null";
+    if (typeof v === "string") return JSON.stringify(v);
+    if (typeof v === "number" || typeof v === "boolean") return String(v);
+    if (Array.isArray(v)) return "[" + v.map(dump).join(", ") + "]";
+    return "{" + Object.keys(v).map(function(k){ return JSON.stringify(k) + ": " + dump(v[k]); }).join(", ") + "}";
+  }
+  function ul(arr, max){
+    max = max || 80;
+    return "<ul>" + arr.slice(0, max).map(function(x){ return "<li>" + esc(x) + "</li>"; }).join("") + (arr.length > max ? "<li>ほか " + (arr.length - max) + " 件</li>" : "") + "</ul>";
+  }
+
+  // ---------- Excel ファイル(.xlsx)を読む ----------
+  function unzip(buf){
+    var dv = new DataView(buf), n = buf.byteLength, eocd = -1, i;
+    for (i = n - 22; i >= Math.max(0, n - 22 - 65535); i--){ if (dv.getUint32(i, true) === 0x06054b50){ eocd = i; break; } }
+    if (eocd < 0) throw new Error("zip");
+    var cnt = dv.getUint16(eocd + 10, true), p = dv.getUint32(eocd + 16, true), ents = {}, dec = new TextDecoder("utf-8"), k;
+    for (k = 0; k < cnt; k++){
+      if (dv.getUint32(p, true) !== 0x02014b50) throw new Error("zip");
+      var nlen = dv.getUint16(p + 28, true), elen = dv.getUint16(p + 30, true), clen = dv.getUint16(p + 32, true);
+      ents[dec.decode(new Uint8Array(buf, p + 46, nlen))] = { method: dv.getUint16(p + 10, true), csize: dv.getUint32(p + 20, true), off: dv.getUint32(p + 42, true) };
+      p += 46 + nlen + elen + clen;
+    }
+    return {
+      has: function(name){ return !!ents[name]; },
+      text: function(name){
+        var e = ents[name];
+        if (!e) return Promise.reject(new Error("missing " + name));
+        var start = e.off + 30 + dv.getUint16(e.off + 26, true) + dv.getUint16(e.off + 28, true);
+        var bytes = new Uint8Array(buf, start, e.csize);
+        if (e.method === 0) return Promise.resolve(dec.decode(bytes));
+        if (e.method !== 8) return Promise.reject(new Error("method"));
+        if (typeof DecompressionStream === "undefined") return Promise.reject(new Error("old-browser"));
+        return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer().then(function(ab){ return dec.decode(ab); });
+      }
+    };
+  }
+  function xml(text){ return new DOMParser().parseFromString(text, "application/xml"); }
+  function kids(el, name){ var out = [], c; for (c = el.firstChild; c; c = c.nextSibling){ if (c.nodeType === 1 && c.localName === name) out.push(c); } return out; }
+  // 文字のセル(ふりがなの部分は、読まない)
+  function siText(si){
+    var t = "";
+    kids(si, "t").forEach(function(x){ t += x.textContent; });
+    kids(si, "r").forEach(function(r){ kids(r, "t").forEach(function(x){ t += x.textContent; }); });
+    return t;
+  }
+  function colIndex(ref){ var n = 0, i, c; for (i = 0; i < ref.length; i++){ c = ref.charCodeAt(i); if (c < 65 || c > 90) break; n = n * 26 + (c - 64); } return n - 1; }
+  function parseSheet(text, shared){
+    var doc = xml(text), rows = [], rs = doc.getElementsByTagNameNS("*", "row"), i, j;
+    for (i = 0; i < rs.length; i++){
+      var ri = parseInt(rs[i].getAttribute("r"), 10); ri = isNaN(ri) ? rows.length : ri - 1;
+      while (rows.length <= ri) rows.push([]);
+      var cs = kids(rs[i], "c"), row = rows[ri];
+      for (j = 0; j < cs.length; j++){
+        var c = cs[j], ref = c.getAttribute("r"), ci = ref ? colIndex(ref) : row.length, t = c.getAttribute("t"), v = kids(c, "v")[0], val = null;
+        if (t === "inlineStr"){ var is = kids(c, "is")[0]; val = is ? siText(is) : ""; }
+        else if (v){
+          var raw = v.textContent;
+          if (t === "s") val = shared[parseInt(raw, 10)];
+          else if (t === "str" || t === "e") val = raw;
+          else if (t === "b") val = raw === "1" ? "TRUE" : "FALSE";
+          else val = raw === "" ? null : Number(raw);
+        }
+        while (row.length < ci) row.push(null);
+        row[ci] = val;
+      }
+    }
+    return rows;
+  }
+  function readXlsx(file){
+    return file.arrayBuffer().then(function(buf){
+      var z = unzip(buf), book = { sheets: {}, names: [], date1904: false };
+      return Promise.all([z.text("xl/workbook.xml"), z.text("xl/_rels/workbook.xml.rels"), z.has("xl/sharedStrings.xml") ? z.text("xl/sharedStrings.xml") : Promise.resolve("")]).then(function(r){
+        var rels = {}, shared = [], want = ["ポケモンリスト", "家具リスト", "家具グループ", "施設リスト", "言語(その他)", "言語(属性)", "言語(施設)", "言語(家具)", "言語(ポケモン)", "お知らせ", "Ver.検証管理", "このツールについて", "使い方", "Q&A"].map(nk), jobs = [];
+        var pr = xml(r[0]).getElementsByTagNameNS("*", "workbookPr")[0];
+        if (pr && /^(1|true)$/.test(pr.getAttribute("date1904") || "")) book.date1904 = true;
+        Array.prototype.forEach.call(xml(r[1]).getElementsByTagNameNS("*", "Relationship"), function(e){ rels[e.getAttribute("Id")] = e.getAttribute("Target"); });
+        if (r[2]) Array.prototype.forEach.call(xml(r[2]).getElementsByTagNameNS("*", "si"), function(si){ shared.push(siText(si)); });
+        Array.prototype.forEach.call(xml(r[0]).getElementsByTagNameNS("*", "sheet"), function(sh){
+          var name = sh.getAttribute("name"), rid = sh.getAttribute("r:id") || sh.getAttributeNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id"), tg = rels[rid];
+          book.names.push(name);
+          if (!tg || want.indexOf(nk(name)) < 0) return;
+          var path = tg.charAt(0) === "/" ? tg.slice(1) : "xl/" + tg;
+          jobs.push(z.text(path).then(function(t){ book.sheets[nk(name)] = parseSheet(t, shared); }));
+        });
+        return Promise.all(jobs).then(function(){ return book; });
+      });
+    });
+  }
+  // 見出しの行(key をふくむ行)を探して、1行を { 見出し: 値 } の形にする
+  function table(rows, key, scan){
+    var i, K = nk(key);
+    for (i = 0; i < Math.min(rows.length, scan || 12); i++){
+      var head = (rows[i] || []).map(function(c){ return nk(S(c)); });
+      if (head.indexOf(K) < 0) continue;
+      return { head: head, recs: rows.slice(i + 1).map(function(r){
+        var d = {}; head.forEach(function(h, c){ if (h && !(h in d)) d[h] = (r && r[c] !== undefined) ? r[c] : null; }); return d;
+      }) };
+    }
+    return null;
+  }
+  function g(rec, name){ return rec[nk(name)]; }
+  function needHead(t, sheet, names, errs){
+    var miss = names.filter(function(n){ return t.head.indexOf(nk(n)) < 0; });
+    if (miss.length){ errs.push("「" + sheet + "」シートに、見出し「" + miss.join("」「") + "」の列が見つかりません(列の見出しの名前を、変えていませんか)。"); return false; }
+    return true;
+  }
+
+  // ---------- Excel から、data.js・lang.js に入る内容を作る ----------
+  function buildData(book){
+    var R = { errors: [], warns: [], skipped: [], lists: {} }, sh = book.sheets;
+    ["ポケモンリスト", "家具リスト", "施設リスト"].forEach(function(n){ if (!sh[nk(n)]) R.errors.push("Excel に、「" + n + "」シートが見つかりません。"); });
+    if (R.errors.length) return R;
+    // ポケモン
+    var tp = table(sh[nk("ポケモンリスト")], "ポケモン名"), pok = [], seen = {};
+    if (!tp) R.errors.push("「ポケモンリスト」シートに、「ポケモン名」という見出しが見つかりません。");
+    else if (needHead(tp, "ポケモンリスト", ["環境", "好物1", "好物2", "好物3", "好物4", "好物5", "ｻｲｽﾞ", "ﾀｲﾌﾟ1", "ﾀｲﾌﾟ2", "苦手", "居住可否"], R.errors)){
+      tp.recs.forEach(function(r){
+        var n = S(g(r, "ポケモン名")); if (!n) return;
+        var likes = [1, 2, 3, 4, 5].map(function(i){ return S(g(r, "好物" + i)); }), env = S(g(r, "環境")), size = num(g(r, "ｻｲｽﾞ")), lv = S(g(r, "居住可否")), miss = [];
+        if (!env) miss.push("環境"); else if (ENVS.indexOf(env) < 0) miss.push("環境の書き方(" + env + ")");
+        if (likes.some(function(x){ return !x; })) miss.push("好物1〜5");
+        if (!S(g(r, "ﾀｲﾌﾟ1"))) miss.push("ﾀｲﾌﾟ1");
+        if (typeof size === "string") miss.push("ｻｲｽﾞ(数字でない)");
+        if (["", "〇", "○", "×"].indexOf(lv) < 0) miss.push("居住可否の書き方");
+        if (miss.length){ R.skipped.push("ポケモン「" + n + "」：" + miss.join("・")); return; }
+        if (seen[n]){ R.errors.push("「ポケモンリスト」シートに、同じ名前のポケモンが2つあります：「" + n + "」"); return; }
+        seen[n] = true;
+        pok.push({ name: n, likes: likes, dislike: S(g(r, "苦手")) || null, size: size, env: env, types: [S(g(r, "ﾀｲﾌﾟ1")), S(g(r, "ﾀｲﾌﾟ2"))].filter(Boolean), livable: lv !== "×" });
+      });
+    }
+    // 家具グループ
+    var grp = {}, tg = sh[nk("家具グループ")] ? table(sh[nk("家具グループ")], "家具名") : null;
+    if (tg && tg.head.indexOf(nk("大分類番号")) >= 0 && tg.head.indexOf(nk("小分類番号")) >= 0){
+      tg.recs.forEach(function(r){
+        var n = S(g(r, "家具名")); if (!n) return;
+        var a = num(g(r, "大分類番号")), b = num(g(r, "小分類番号"));
+        if (!Number.isInteger(a) || !Number.isInteger(b)){ R.warns.push("「家具グループ」シートの「" + n + "」：大分類番号か小分類番号が、数字ではありません(グループは、付けません)。"); return; }
+        if (!grp[n]) grp[n] = a + "-" + b;
+      });
+    }
+    // 家具
+    var tf = table(sh[nk("家具リスト")], "家具名"), fur = [], furNames = {}; seen = {};
+    if (!tf) R.errors.push("「家具リスト」シートに、「家具名」という見出しが見つかりません。");
+    else if (needHead(tf, "家具リスト", ["用途", "ｻｲｽﾞ", "環境1", "環境2", "ﾚｼﾋﾟ", "属性1", "属性2", "属性3", "属性4", "属性5", "属性6", "属性7"], R.errors)){
+      tf.recs.forEach(function(r){
+        var n = S(g(r, "家具名")); if (!n) return;
+        var attrs = [1, 2, 3, 4, 5, 6, 7].map(function(i){ return S(g(r, "属性" + i)); }).filter(Boolean), env = [S(g(r, "環境1")), S(g(r, "環境2"))].filter(Boolean), rc = S(g(r, "ﾚｼﾋﾟ")), size = num(g(r, "ｻｲｽﾞ")), miss = [];
+        if (!S(g(r, "用途"))) miss.push("用途");
+        if (rc !== "有" && rc !== "無") miss.push("ﾚｼﾋﾟ(有か無)");
+        if (!attrs.length) miss.push("属性(1つも入っていない)");
+        if (typeof size === "string") miss.push("ｻｲｽﾞ(数字でない)");
+        if (env.some(function(x){ return FENVS.indexOf(x) < 0; })) miss.push("環境1・環境2の書き方");
+        if (miss.length){ R.skipped.push("家具「" + n + "」：" + miss.join("・")); return; }
+        if (seen[n]){ R.errors.push("「家具リスト」シートに、同じ名前の家具が2つあります：「" + n + "」"); return; }
+        seen[n] = true;
+        var o = { name: n, usage: S(g(r, "用途")), attrs: attrs, size: size, recipe: rc === "有" };
+        if (env.length) o.env = env;
+        if (grp[n]) o.group = grp[n];
+        fur.push(o); furNames[n] = true;
+      });
+      Object.keys(grp).forEach(function(n){ if (!furNames[n]) R.warns.push("「家具グループ」シートの家具名「" + n + "」が、data.js に入る家具の中にありません(書き間違い、または、その家具の入力が足りません)。"); });
+    }
+    // 施設
+    var rows = sh[nk("施設リスト")], h = -1, i, fac = [], seenFac = {};
+    for (i = 0; i < Math.min(rows.length, 10); i++){ if ((rows[i] || []).some(function(x){ return S(x) === "必要レベル"; })){ h = i; break; } }
+    if (h < 0) R.errors.push("「施設リスト」シートに、「必要レベル」という見出しが見つかりません。");
+    else {
+      var head = rows[h].map(S), unknown = [], c;
+      for (c = 0; c < head.length - 1; c++){
+        if (!head[c] || head[c] === "必要レベル" || head[c + 1] !== "必要レベル" || head[c].indexOf("施設名") === 0) continue;
+        var name = head[c], list = [], sn = {};
+        if (seenFac[name]){ R.errors.push("「施設リスト」シートに、同じ名前の施設が2つあります：「" + name + "」"); continue; }
+        seenFac[name] = true;
+        for (i = h + 1; i < rows.length; i++){
+          var rw = rows[i] || [], fn = S(rw[c]), lv = nk(S(rw[c + 1]));
+          if (!fn){ if (lv) R.warns.push("施設「" + name + "」：家具名が空なのに、必要レベル(" + lv + ")だけが入っている行があります(その行は、使いません)。"); continue; }
+          if (sn[fn]){ R.warns.push("施設「" + name + "」：同じ家具「" + fn + "」が、2回入っています(最初の1つだけを使います)。"); continue; }
+          sn[fn] = true;
+          if (!/^[123]$/.test(lv)){ R.errors.push("施設「" + name + "」の「" + fn + "」：必要レベルが、1〜3の数字ではありません(いまの値：" + (lv === "" ? "空" : lv) + ")。"); continue; }
+          if (!furNames[fn]) unknown.push("施設「" + name + "」の「" + fn + "」");
+          list.push({ name: fn, level: parseInt(lv, 10) });
+        }
+        if (!list.length) R.warns.push("施設「" + name + "」：家具が、1つも入っていません。");
+        fac.push({ name: name, furniture: list });
+      }
+      if (unknown.length){ R.errors.push("施設に入っている家具のうち、data.js に入る家具の一覧にない名前が、" + unknown.length + " か所あります。「家具リスト」シートの名前と、1文字も違わないように直してください(その家具の入力が足りなくて、入っていないこともあります)。"); R.unknown = unknown; }
+    }
+    R.lists = { pokemons: pok, furniture: fur, facilities: fac };
+    return R;
+  }
+  var LANG_SHEETS = [["ui", "言語(その他)", "画面の文言"], ["attrs", "言語(属性)", "属性"], ["facilities", "言語(施設)", "施設"], ["furniture", "言語(家具)", "家具"], ["pokemon", "言語(ポケモン)", "ポケモン"]];
+  function buildLang(book, pairs){
+    var R = { errors: [], warns: [], skipped: [], lists: {} }, cols = [["en", "英語"], ["ko", "韓国語"], ["zhHans", "中国語(簡体字)"], ["zhHant", "中国語(繁体字)"]];
+    LANG_SHEETS.forEach(function(def){
+      var key = def[0], sn = def[1], rows = book.sheets[nk(sn)], out = [], seen = {};
+      if (!rows){ R.errors.push("Excel に、「" + sn + "」シートが見つかりません。"); return; }
+      var t = table(rows, "日本語");
+      if (!t){ R.errors.push("「" + sn + "」シートに、「日本語」という見出しが見つかりません。"); return; }
+      if (!needHead(t, sn, cols.map(function(c){ return c[1]; }).concat(key === "pokemon" ? ["ぽこあ内定"] : []), R.errors)) return;
+      t.recs.forEach(function(r){
+        var ja = S(g(r, "日本語")); if (!ja) return;
+        // 「■」で始まり、翻訳の列が4つとも空の行は、まとまりの見出し(「言語(その他)」シートを、使う場所ごとに分けるための行)なので、読みとばす
+        if (/^■/.test(ja) && cols.every(function(c){ return !S(g(r, c[1])); })) return;
+        if (key === "pokemon" && ["〇", "○"].indexOf(S(g(r, "ぽこあ内定"))) < 0) return;
+        var o = { ja: ja }, empty = [], nl = /[\r\n]/.test(ja);
+        cols.forEach(function(c){ var v = S(g(r, c[1])); o[c[0]] = v; if (!v) empty.push(c[1]); if (/[\r\n]/.test(v)) nl = true; });
+        if (empty.length){ R.skipped.push("「" + sn + "」シートの「" + ja + "」：翻訳が空(" + empty.join("・") + ")"); return; }
+        if (nl){ R.skipped.push("「" + sn + "」シートの「" + ja + "」：セルの中に、改行がある"); return; }
+        if (seen[ja]){ R.warns.push("「" + sn + "」シートに、同じ日本語「" + ja + "」が2回あります(最初の1つだけを使います)。"); return; }
+        seen[ja] = true;
+        if (key === "ui"){
+          var ph = function(s){ return (s.match(/\{[^{}]*\}/g) || []).sort().join(" "); }, base = ph(ja);
+          cols.forEach(function(c){ if (ph(o[c[0]]) !== base) R.warns.push("「" + sn + "」シートの「" + ja + "」：" + c[1] + "の文の中の { } の部分が、日本語と違います。"); });
+        }
+        out.push(o);
+      });
+      R.lists[key] = out;
+    });
+    // 種類の列があるシート(お知らせ・このツールについて・使い方・Q&A・Ver.検証管理)の翻訳を、画面の文言("ui")に足す
+    if (R.lists.ui && pairs && pairs.length){
+      var at = {}, from = {}, ph2 = function(s){ return (s.match(/\{[^{}]*\}/g) || []).sort().join(" "); };
+      R.lists.ui.forEach(function(o, i){ at["k:" + o.ja] = i; });
+      pairs.forEach(function(p){
+        if (!p.tr) return;
+        var o = { ja: p.ja, en: p.tr.en, ko: p.tr.ko, zhHans: p.tr.zhHans, zhHant: p.tr.zhHant }, k = "k:" + p.ja;
+        if (/[\r\n]/.test(o.en + o.ko + o.zhHans + o.zhHant)) return;
+        cols.forEach(function(c){ if (ph2(o[c[0]]) !== ph2(p.ja)) R.warns.push("「" + p.sheet + "」シートの「" + p.ja + "」：" + c[1] + "の文の中の { } の部分が、日本語と違います。"); });
+        if (k in at){
+          if (dump(R.lists.ui[at[k]]) !== dump(o)){
+            if (from[k]){ R.warns.push("「" + p.ja + "」の翻訳が、「" + from[k] + "」シートと「" + p.sheet + "」シートの " + p.no + " 行目で、違います(先に出てきた、「" + from[k] + "」シートの翻訳を使います。同じ日本語には、同じ翻訳を入れてください)。"); return; }
+            R.warns.push("「" + p.ja + "」の翻訳が、「" + p.sheet + "」シートと「言語(その他)」シートで、違います(「" + p.sheet + "」シートの翻訳を使います。「言語(その他)」シートの行は、消すか、同じ翻訳に直してください)。");
+            R.lists.ui[at[k]] = o;
+          }
+        } else { at[k] = R.lists.ui.length; R.lists.ui.push(o); }
+        if (!from[k]) from[k] = p.sheet;
+      });
+    }
+    return R;
+  }
+
+  // ---------- Excel の、種類の列があるシート(このツールについて・使い方・Q&A・お知らせ・Ver.検証管理)を読む ----------
+  // 5つのシートは、1行が1つの部品で、「種類」の列で、その行の見た目を決める。列は、1行目の見出しの名前で探す(列の順番を入れかえても、読める)。
+  var TRC = [["en", "英語"], ["ko", "韓国語"], ["zhHans", "中国語(簡体字)"], ["zhHant", "中国語(繁体字)"]];
+  var PARTS = {
+    about:  { sheet: "このツールについて", key: "日本語", need: ["種類", "日本語"], types: ["文", "見出し", "項目", "リンク", "すきま", "ボタン(ここから)", "ボタン(ここまで)", "表"], cols: { raw: "翻訳しない文字", link: "リンク先" } },
+    how:    { sheet: "使い方", key: "日本語", need: ["種類", "日本語"], types: ["大見出し", "見出し", "文", "すきま"], cols: {} },
+    qa:     { sheet: "Q&A", key: "日本語", need: ["種類", "日本語"], types: ["Q", "A", "すきま", "見出し", "式", "箇条", "ボタン(ここから)", "ボタン(ここまで)"], cols: {} },
+    news:   { sheet: "お知らせ", key: "日本語", need: ["日付", "日本語"], def: "お知らせ", types: ["お知らせ", "見出し", "文", "すきま"], cols: { date: "日付", banner: "バナー" } },
+    verify: { sheet: "Ver.検証管理", key: "Ver.", need: ["Ver.", "検証者"], def: "検証", types: ["検証", "見出し", "文", "すきま"], cols: { ver: "Ver.", who: "検証者" } }
+  };
+  function hEsc(s){ return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function hUnesc(s){ return String(s).replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&amp;/g, "&"); }
+  // HTML の、属性の値(" " の中)と、文に使う文字にする
+  function hA(s){ return hEsc(s).replace(/"/g, "&quot;"); }
+  function two(n){ return (n < 10 ? "0" : "") + n; }
+  // 日付のセルを、[年, 月, 日] にする(読めないときは null)
+  function readDate(v, date1904){
+    var y, m, d, t, dt;
+    if (typeof v === "number"){
+      if (!(v > 20000 && v < 80000)) return null;
+      dt = new Date(Date.UTC(1899, 11, 30) + (Math.floor(v) + (date1904 ? 1462 : 0)) * 86400000);
+      return [dt.getUTCFullYear(), dt.getUTCMonth() + 1, dt.getUTCDate()];
+    }
+    t = /^(\d{4})\s*[.\/\-年]\s*(\d{1,2})\s*[.\/\-月]\s*(\d{1,2})\s*日?$/.exec(nk(S(v)));
+    if (!t) return null;
+    y = +t[1]; m = +t[2]; d = +t[3];
+    dt = new Date(Date.UTC(y, m - 1, d));
+    if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== m - 1 || dt.getUTCDate() !== d) return null;
+    return [y, m, d];
+  }
+  function wh(R, r){ return "「" + R.sheet + "」シートの " + r.no + " 行目："; }
+  // シートを読んで、行ごとに { no:行の番号, kind:種類, ja:日本語, tr:翻訳, ほかの列 } にする
+  function readPart(book, id){
+    var def = PARTS[id], R = { id: id, sheet: def.sheet, present: false, errors: [], warns: [], skipped: [], rows: [], pairs: [], hasKind: false }, rows = book.sheets[nk(def.sheet)];
+    if (!rows) return R;
+    R.present = true;
+    var h = -1, i, col = {};
+    for (i = 0; i < Math.min(rows.length, 12); i++){ if ((rows[i] || []).some(function(c){ return nk(S(c)) === nk(def.key); })){ h = i; break; } }
+    if (h < 0){
+      // 「お知らせ」シートだけは、見出しの行がない、前の形(A列が日付、B列が日本語…)も読める
+      if (id === "news") ["日付", "日本語", "英語", "韓国語", "中国語(簡体字)", "中国語(繁体字)", "バナー"].forEach(function(n, c){ col[nk(n)] = c; });
+      else { R.errors.push("「" + def.sheet + "」シートに、「" + def.key + "」という見出しが見つかりません(1行目の見出しを、消したり、書きかえたりしていませんか)。"); return R; }
+    } else rows[h].forEach(function(c, k){ var n = nk(S(c)); if (n && !(n in col)) col[n] = k; });
+    var miss = def.need.filter(function(n){ return !(nk(n) in col); });
+    if (miss.length){ R.errors.push("「" + def.sheet + "」シートに、見出し「" + miss.join("」「") + "」の列が見つかりません(1行目の見出しの名前を、変えていませんか)。"); return R; }
+    R.hasKind = nk("種類") in col;
+    var get = function(r, n){ var c = col[nk(n)]; return (c === undefined || r[c] === undefined) ? null : r[c]; };
+    var isEmpty = function(v){ return v === null || v === undefined || (typeof v === "number" ? false : S(v) === ""); };
+    for (i = h + 1; i < rows.length; i++){
+      var r = rows[i] || [], o = { no: i + 1, kind: nk(S(get(r, "種類"))), ja: S(get(r, "日本語")), tr: null }, any = !!(o.kind || o.ja), tv = TRC.map(function(c){ return S(get(r, c[1])); });
+      Object.keys(def.cols).forEach(function(k){ o[k] = get(r, def.cols[k]); if (!isEmpty(o[k])) any = true; });
+      if (tv.some(Boolean)) any = true;
+      if (!any) continue;
+      if (!o.kind){
+        if (def.def) o.kind = def.def;
+        else { R.errors.push(wh(R, o) + "種類が、選ばれていません(「種類」の列のセルの ▼ を押して、選んでください)。"); continue; }
+      }
+      if (def.types.indexOf(o.kind) < 0){ R.errors.push(wh(R, o) + "種類「" + o.kind + "」は、このシートでは使えません(使える種類：" + def.types.join("・") + ")。"); continue; }
+      if (/[\r\n]/.test(o.ja) || Object.keys(def.cols).some(function(k){ return typeof o[k] === "string" && /[\r\n]/.test(S(o[k])); })){ R.errors.push(wh(R, o) + "セルの中に、改行があります。改行を消してください(改行したいときは、行を分けて、同じ種類の行を続けて書きます)。"); continue; }
+      var empty = TRC.filter(function(c, k){ return !tv[k]; }).map(function(c){ return c[1]; });
+      if (empty.length === 0){
+        if (tv.some(function(x){ return /[\r\n]/.test(x); })) R.skipped.push(wh(R, o) + "「" + o.ja + "」の翻訳のセルの中に、改行がある");
+        else if (!o.ja) R.warns.push(wh(R, o) + "翻訳の列に文字がありますが、日本語の列が空です(翻訳は、使いません)。");
+        else o.tr = { en: tv[0], ko: tv[1], zhHans: tv[2], zhHant: tv[3] };
+      } else if (empty.length < 4) R.skipped.push(wh(R, o) + "「" + o.ja + "」の翻訳が空(" + empty.join("・") + ")");
+      R.rows.push(o);
+    }
+    return R;
+  }
+  // 文の中の [コピー](コピーボタンの小さな絵を出す印)で、文を区切る
+  var ICO_SPLIT = /[\[［]コピー[\]］]/;
+  var ICO_HTML = '<span class="how-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></span>';
+  function splitIco(s){ return String(s).split(ICO_SPLIT).map(function(x){ return S(x); }); }
+  // 文の先頭の、①〜⑳(mode が "num")、=(同 "eq")、＋(同 "fold")を、文から切りはなす(翻訳するのは、そのあとの部分だけ)
+  function cutPre(s, mode){
+    var m = null;
+    if (mode === "num") m = /^([①-⑳])[\s　]*/.exec(s);
+    else if (mode === "eq") m = /^([=＝])[\s　]*/.exec(s);
+    else if (mode === "fold") m = /^([+＋])[\s　]*/.exec(s);
+    return m ? { pre: m[1], rest: s.slice(m[0].length) } : { pre: "", rest: s };
+  }
+  // 1行の文を、{ pre:先頭の記号, segs:[コピー]で区切った文 } にして、翻訳の組を R.pairs に足す
+  function textOf(R, r, mode, whole){
+    var c = cutPre(r.ja, mode), segs = whole ? [S(c.rest)] : splitIco(c.rest), tx = { pre: c.pre, segs: segs }, trs = null;
+    if (r.tr){
+      var ok = true; trs = {};
+      TRC.forEach(function(t){
+        var rest = cutPre(r.tr[t[0]], mode).rest, x = whole ? [S(rest)] : splitIco(rest);
+        trs[t[0]] = x;
+        if (x.length !== segs.length || x.some(function(v, k){ return !v !== !segs[k]; })) ok = false;
+      });
+      if (!ok){ R.skipped.push(wh(R, r) + "「" + r.ja + "」の翻訳の中の [コピー] の数や場所が、日本語と違う(または、先頭の記号だけで、文がない)"); trs = null; }
+    }
+    segs.forEach(function(sg, k){ if (sg) R.pairs.push({ ja: sg, tr: trs ? { en: trs.en[k], ko: trs.ko[k], zhHans: trs.zhHans[k], zhHant: trs.zhHant[k] } : null, sheet: R.sheet, no: r.no }); });
+    return tx;
+  }
+  function hasText(tx){ return tx.segs.some(Boolean); }
+  function spanT(s){ return '<span data-i18n="' + hA(s) + '">' + hA(s) + '</span>'; }
+  function lineHtml(tx){ return tx.segs.map(function(sg){ return sg ? spanT(sg) : ""; }).join(ICO_HTML); }
+  // open(最後の > を付けていない、開くタグ)と close(閉じるタグ)のあいだに、文を入れる。文が1つだけのときは、タグそのものに data-i18n を付ける
+  function wrapT(open, close, txs){
+    if (txs.length === 1 && txs[0].segs.length === 1) return open + ' data-i18n="' + hA(txs[0].segs[0]) + '">' + hA(txs[0].segs[0]) + close;
+    return open + ">" + txs.map(lineHtml).join("<br>") + close;
+  }
+  // 名前(「、」で区切ると、2人以上)。最後の「様」は、日本語の画面でだけ出す
+  function splitNames(s){ return String(s).split(/[、,，]/).map(function(x){ return S(x); }).filter(Boolean); }
+  function namesHtml(names){ return names.map(function(n){ return /.様$/.test(n) ? hEsc(n.slice(0, -1)) + "<span data-only-ja>様</span>" : hEsc(n); }).join('<span class="name-sep">、</span>'); }
+  function verLine(ver, names){ return "<tr><td>" + hEsc(ver) + "</td><td>" + namesHtml(names) + "</td></tr>"; }
+  // リンクの、開くタグ(最後の > は付けない)。https:// などで始まるときは、別のタブで開く
+  function linkOpen(url, label){
+    var ext = /^https?:\/\//i.test(url), t = "";
+    if (label && /^https?:\/\/(www\.)?(x|twitter)\.com\//i.test(url)) t = ' title="' + hA(label.replace(/\(@/, " (@") + " / X") + '"';
+    return '<a href="' + hA(url) + '"' + (ext ? ' target="_blank" rel="noopener noreferrer"' : "") + t;
+  }
+  function linkOk(url){ return /^https?:\/\/[^\s"<>]+$/i.test(url) || /^[A-Za-z0-9_.\-\/#?=&%~]+$/.test(url); }
+
+  // ---- お知らせ ----
+  function buildNews(book){
+    var R = readPart(book, "news"); R.items = []; R.tail = []; R.deco = false;
+    if (!R.present || R.errors.length) return R;
+    var seen = {}, list = [], pend = [], last = null;
+    R.rows.forEach(function(r){
+      var w = wh(R, r);
+      if (r.kind !== "お知らせ"){
+        var d = { kind: r.kind === "見出し" ? "h" : (r.kind === "文" ? "p" : "gap") };
+        if (d.kind !== "gap"){
+          if (!r.ja){ R.errors.push(w + "「日本語」の列が、空です。"); return; }
+          d.text = r.ja; R.pairs.push({ ja: r.ja, tr: r.tr, sheet: R.sheet, no: r.no });
+        }
+        R.deco = true;
+        // 見出しは、すぐ下のお知らせの上に出す。文・すきまは、すぐ上のお知らせの下に出す(上が見出しのときは、その見出しに続ける)
+        if (d.kind === "h" || !last || pend.length) pend.push(d); else last.after.push(d);
+        return;
+      }
+      var rawDate = r.date, text = r.ja;
+      if (!text){ R.warns.push(w + "日付だけが入っていて、文がありません(その行は、使いません)。"); return; }
+      var ymd = readDate(rawDate, book.date1904);
+      if (!ymd){ R.errors.push(w + "「" + text + "」の日付が、読み取れません(いまの値：" + (S(rawDate) === "" ? "空" : S(rawDate)) + ")。「日付」の列に、「2026/10/2」のように、入力してください。"); return; }
+      if (/<\/script/i.test(text)){ R.errors.push(w + "文の中に、使えない文字(<\/script)があります。"); return; }
+      var date = ymd[0] + "." + ymd[1] + "." + ymd[2], key = date + "\n" + text;
+      if (seen[key]){ R.warns.push("「お知らせ」シートに、同じ日付・同じ文のお知らせが、2回あります(最初の1つだけを使います)：「" + text + "」"); return; }
+      seen[key] = true;
+      var bn = nk(S(r.banner)), hide = ["×", "x", "X", "✕", "✖", "バツ", "出さない"].indexOf(bn) >= 0;
+      if (bn && !hide && ["〇", "○", "出す"].indexOf(bn) < 0) R.warns.push(w + "「" + text + "」のバナーの列に「" + bn + "」と入っています(バナーに出さないときだけ、「×」を入れます。今回は、出すものとして扱います)。");
+      R.pairs.push({ ja: text, tr: r.tr, sheet: R.sheet, no: r.no });
+      last = { date: date, ymd: "" + ymd[0] + two(ymd[1]) + two(ymd[2]), sort: ymd[0] * 10000 + ymd[1] * 100 + ymd[2], row: r.no, text: text, banner: !hide, before: pend, after: [] };
+      pend = []; list.push(last);
+    });
+    R.tail = pend;
+    // 新しい順(同じ日付のときは、シートの下の行ほど、新しい)
+    list.sort(function(a, b){ return (b.sort - a.sort) || (b.row - a.row); });
+    R.items = list;
+    return R;
+  }
+
+  // ---- 検証の表(Ver.検証管理) ----
+  function buildVerify(book){
+    var R = readPart(book, "verify"); R.items = []; R.parts = [];
+    if (!R.present || R.errors.length) return R;
+    var seen = {};
+    R.rows.forEach(function(r){
+      var w = wh(R, r);
+      if (r.kind !== "検証"){
+        if (r.kind === "すきま"){ R.parts.push({ kind: "すきま" }); return; }
+        if (!r.ja){ R.errors.push(w + "「日本語」の列が、空です(見出し・文は、「日本語」の列に書きます)。"); return; }
+        R.parts.push({ kind: r.kind, tx: textOf(R, r, "") });
+        return;
+      }
+      var raw = r.ver, ver = typeof raw === "number" ? String(raw) : S(raw), who = S(r.who);
+      if (!ver && !who){ if (r.ja) R.errors.push(w + "「日本語」の列に文字がありますが、種類が「検証」のままです(見出しや文にするときは、「種類」の列で「見出し」か「文」を選んでください)。"); return; }
+      if (!ver){ R.skipped.push("「Ver.検証管理」シートの「" + who + "」の行：Ver. が空"); return; }
+      var names = splitNames(who);
+      if (!names.length || names.some(function(n){ return n === "様"; })){ R.skipped.push("「Ver.検証管理」シートの「" + ver + "」の行：検証者の名前が空"); return; }
+      if (/[\r\n]/.test(ver + who)){ R.skipped.push("「Ver.検証管理」シートの「" + ver + "」の行：セルの中に、改行がある"); return; }
+      if (seen[ver]){ R.warns.push("「Ver.検証管理」シートに、同じ Ver.「" + ver + "」が2回あります(最初の1つだけを使います)。"); return; }
+      seen[ver] = true;
+      if (!/^\d+\.\d+\.\d+$/.test(ver)) R.warns.push("「Ver.検証管理」シートの「" + ver + "」：Ver. が「数字.数字.数字」の形ではありません。Excel で、別の数字に変わっていないか、確かめてください(先頭に ' を付けて入力すると、書いたとおりに入ります)。");
+      var it = { kind: "検証", ver: ver, who: names.join("、"), line: verLine(ver, names) };
+      R.items.push(it); R.parts.push(it);
+    });
+    return R;
+  }
+  // 検証の表(と、その前後の見出し・文)の、HTML の行
+  function verifyLines(V, ind){
+    var L = [], run = [], notes = [];
+    function flushT(){
+      if (!run.length) return;
+      L.push(ind + '<table class="verify-table">', ind + '  <thead><tr><th>Ver.</th><th data-i18n="検証者">検証者</th></tr></thead>', ind + "  <tbody>");
+      run.forEach(function(x){ L.push(ind + "    " + x.line); });
+      L.push(ind + "  </tbody>", ind + "</table>"); run = [];
+    }
+    function flushN(){ if (!notes.length) return; L.push(ind + wrapT('<div class="verify-note"', "</div>", notes)); notes = []; }
+    V.parts.forEach(function(p){
+      if (p.kind === "検証"){ flushN(); run.push(p); }
+      else if (p.kind === "文"){ flushT(); notes.push(p.tx); }
+      else { flushT(); flushN(); L.push(ind + (p.kind === "見出し" ? wrapT('<div class="verify-h"', "</div>", [p.tx]) : '<div class="verify-gap"></div>')); }
+    });
+    flushT(); flushN();
+    return L;
+  }
+
+  // ---- このツールについて ----
+  function buildAbout(book, V){
+    var R = readPart(book, "about"); R.lines = null;
+    if (!R.present || R.errors.length) return R;
+    var I4 = "    ", I6 = "      ", I8 = "        ", L = [], groups = [[]], cur = null, foldN = 0, err = R.errors;
+    R.rows.forEach(function(r){
+      var w = wh(R, r), it = null, raw = S(r.raw), link = S(r.link), tx;
+      if (r.kind === "ボタン(ここから)"){
+        if (cur){ err.push(w + "「ボタン(ここから)」の中に、もう1つ「ボタン(ここから)」があります(先に、「ボタン(ここまで)」の行を入れてください)。"); return; }
+        tx = textOf(R, r, "fold", true);
+        if (!hasText(tx)){ err.push(w + "ボタンの文字(「日本語」の列)が、空です。"); return; }
+        cur = { k: "fold", tx: tx, body: [], no: r.no }; groups[groups.length - 1].push(cur); return;
+      }
+      if (r.kind === "ボタン(ここまで)"){ if (!cur) err.push(w + "「ボタン(ここまで)」の上に、「ボタン(ここから)」の行がありません。"); cur = null; return; }
+      if (r.kind === "すきま"){ if (cur) cur.body.push({ k: "gap" }); else groups.push([]); return; }
+      if (r.kind === "表"){
+        if (nk(raw) !== nk("Ver.検証管理")){ err.push(w + "種類が「表」の行は、「翻訳しない文字」の列に、出したいシートの名前を書きます(いま使えるのは、「Ver.検証管理」だけです)。"); return; }
+        if (!V.present){ err.push(w + "Excel に、「Ver.検証管理」シートが見つかりません。"); return; }
+        R.usesVerify = true; it = { k: "table" };
+      } else {
+        tx = textOf(R, r, "");
+        if (!hasText(tx)){ err.push(w + "「日本語」の列が、空です。"); return; }
+        if (link && !linkOk(link)){ err.push(w + "「リンク先」の列の「" + link + "」は、リンク先として使えません(https:// で始まるページの住所か、privacy.html のようなファイルの名前を書きます)。"); return; }
+        if (r.kind === "文") it = { k: "line", html: lineHtml(tx) };
+        else if (r.kind === "見出し") it = { k: "line", html: wrapT('<span class="about-h"', "</span>", [tx]) };
+        else if (r.kind === "項目"){
+          var names = splitNames(raw);
+          if (!names.length){ err.push(w + "種類が「項目」の行は、「翻訳しない文字」の列に、名前を書きます。"); return; }
+          it = { k: "line", html: lineHtml(tx) + '<span class="colon">：</span>' + (link ? linkOpen(link, names.join("、")) + ">" + namesHtml(names) + "</a>" : namesHtml(names)) };
+        } else {
+          if (!link){ err.push(w + "種類が「リンク」の行は、「リンク先」の列に、開くページの住所を書きます。"); return; }
+          it = { k: "line", html: wrapT(linkOpen(link, ""), "</a>", [tx]) };
+        }
+      }
+      (cur ? cur.body : groups[groups.length - 1]).push(it);
+    });
+    if (cur) err.push("「このツールについて」シートの " + cur.no + " 行目の「ボタン(ここから)」に対応する、「ボタン(ここまで)」の行がありません。");
+    groups.forEach(function(g){ g.forEach(function(x){ if (x.k === "fold" && !x.body.some(function(y){ return y.k !== "gap"; })) err.push("「このツールについて」シートの " + x.no + " 行目の「ボタン(ここから)」の中に、行がありません。"); }); });
+    if (err.length) return R;
+    var body = function(items, ind){
+      var out = [], run = [], flush = function(){ if (run.length){ out.push(ind + '<div class="verify-note">' + run.join("<br>") + "</div>"); run = []; } };
+      items.forEach(function(x){
+        if (x.k === "line") run.push(x.html);
+        else { flush(); if (x.k === "gap") out.push(ind + '<div class="verify-gap"></div>'); else out = out.concat(verifyLines(V, ind)); }
+      });
+      flush(); return out;
+    };
+    groups.forEach(function(g){
+      if (!g.length) return;
+      var block = g.some(function(x){ return x.k !== "line"; });
+      L.push(I4 + (block ? '<div class="about-p">' : "<p>"));
+      g.forEach(function(x, k){
+        if (x.k === "line") L.push(I6 + x.html + (k < g.length - 1 ? "<br>" : ""));
+        else if (x.k === "table") L = L.concat(verifyLines(V, I6));
+        else {
+          var id = "aboutFold" + (++foldN);
+          L.push(I6 + '<button type="button" class="about-more fold-btn" aria-expanded="false" aria-controls="' + id + '">' + lineHtml(x.tx) + '<span class="about-more-mark">＋詳細</span></button><br>');
+          L.push(I6 + '<div class="verify-panel fold-panel" id="' + id + '" hidden>');
+          L = L.concat(body(x.body, I8));
+          L.push(I6 + "</div>");
+        }
+      });
+      L.push(I4 + (block ? "</div>" : "</p>"));
+    });
+    R.lines = L;
+    return R;
+  }
+
+  // ---- 使い方 ----
+  function buildHow(book){
+    var R = readPart(book, "how"); R.lines = null;
+    if (!R.present || R.errors.length) return R;
+    var I6 = "      ", I8 = "        ", L = [], item = null;
+    function close(){
+      if (!item) return;
+      var ps = item.paras.filter(function(p){ return p.length; });
+      if (item.h || ps.length){
+        L.push(I6 + '<div class="how-item">');
+        if (item.h) L.push(I8 + item.h);
+        ps.forEach(function(p){ L.push(I8 + wrapT('<p class="how-p"', "</p>", p)); });
+        L.push(I6 + "</div>");
+      }
+      item = null;
+    }
+    R.rows.forEach(function(r){
+      if (r.kind === "すきま"){ if (item) item.paras.push([]); return; }
+      var tx = textOf(R, r, r.kind === "見出し" ? "num" : "");
+      if (!hasText(tx)){ R.errors.push(wh(R, r) + "「日本語」の列が、空です。"); return; }
+      if (r.kind === "大見出し"){ close(); L.push(I6 + wrapT('<div class="how-group-title' + (L.length ? " how-group-title-2nd" : "") + '"', "</div>", [tx])); }
+      else if (r.kind === "見出し"){ close(); item = { h: '<div class="how-h">' + (tx.pre ? tx.pre + " " : "") + lineHtml(tx) + "</div>", paras: [[]] }; }
+      else { if (!item) item = { h: "", paras: [[]] }; item.paras[item.paras.length - 1].push(tx); }
+    });
+    close();
+    if (!R.errors.length) R.lines = L;
+    return R;
+  }
+
+  // ---- Q&A ----
+  function buildQa(book){
+    var R = readPart(book, "qa"); R.lines = null;
+    if (!R.present || R.errors.length) return R;
+    var I6 = "      ", I8 = "        ", L = [], items = [], cur = null, fold = null, foldN = 0, err = R.errors;
+    R.rows.forEach(function(r){
+      var w = wh(R, r), tx;
+      if (r.kind === "Q"){
+        if (fold){ err.push("「Q&A」シートの " + fold.no + " 行目の「ボタン(ここから)」に対応する、「ボタン(ここまで)」の行がありません。"); fold = null; }
+        tx = textOf(R, r, "");
+        if (!hasText(tx)){ err.push(w + "「日本語」の列が、空です。"); return; }
+        cur = { q: tx, blocks: [], no: r.no }; items.push(cur); return;
+      }
+      if (!cur){ err.push(w + "いちばん上の行は、種類を「Q」にしてください(種類が「" + r.kind + "」の行が、「Q」の行より上にあります)。"); return; }
+      var dst = fold ? fold.blocks : cur.blocks, last = dst[dst.length - 1];
+      if (r.kind === "ボタン(ここから)"){
+        if (fold){ err.push(w + "「ボタン(ここから)」の中に、もう1つ「ボタン(ここから)」があります(先に、「ボタン(ここまで)」の行を入れてください)。"); return; }
+        tx = textOf(R, r, "fold", true);
+        if (!hasText(tx)){ err.push(w + "ボタンの文字(「日本語」の列)が、空です。"); return; }
+        fold = { k: "fold", tx: tx, blocks: [], no: r.no }; cur.blocks.push(fold); return;
+      }
+      if (r.kind === "ボタン(ここまで)"){ if (!fold) err.push(w + "「ボタン(ここまで)」の上に、「ボタン(ここから)」の行がありません。"); fold = null; return; }
+      if (r.kind === "すきま"){ dst.push({ k: "gap" }); return; }
+      tx = textOf(R, r, r.kind === "見出し" ? "num" : (r.kind === "式" ? "eq" : ""));
+      if (!hasText(tx)){ err.push(w + "「日本語」の列が、空です。"); return; }
+      if (r.kind === "A"){ if (last && last.k === "para") last.lines.push(tx); else dst.push({ k: "para", lines: [tx] }); }
+      else if (r.kind === "見出し") dst.push({ k: "step", h: tx, rows: [] });
+      else {
+        if (!last || last.k !== "step"){ last = { k: "step", h: null, rows: [] }; dst.push(last); }
+        last.rows.push({ kind: r.kind, tx: tx });
+      }
+    });
+    if (fold) err.push("「Q&A」シートの " + fold.no + " 行目の「ボタン(ここから)」に対応する、「ボタン(ここまで)」の行がありません。");
+    var real = function(bl){ return bl.filter(function(b){ return b.k !== "gap"; }); };
+    function emit(bl, ind){
+      bl.forEach(function(b){
+        if (b.k === "para") L.push(ind + wrapT('<span class="qa-para"', "</span>", b.lines));
+        else if (b.k === "step"){
+          L.push(ind + '<div class="fm-step">');
+          if (b.h) L.push(ind + '  <div class="fm-h">' + (b.h.pre ? b.h.pre + " " : "") + lineHtml(b.h) + "</div>");
+          b.rows.forEach(function(x){
+            if (x.kind === "式") L.push(ind + '  <div class="fm-eq">= ' + lineHtml(x.tx) + "</div>");   // 先頭の「= 」は、いつも付ける(Excel では、= で始まる文を書けないため)
+            else L.push(ind + "  " + wrapT('<div class="fm-li"', "</div>", [x.tx]));
+          });
+          L.push(ind + "</div>");
+        } else {
+          var id = "qaFold" + (++foldN), lab = b.tx.segs[0];
+          L.push(ind + '<button type="button" class="formula-toggle fold-btn" aria-expanded="false" aria-controls="' + id + '" data-fold-label="' + hA(lab) + '">＋' + hA(lab) + "</button>");
+          L.push(ind + '<div class="formula-panel fold-panel" id="' + id + '" hidden>');
+          emit(real(b.blocks), ind + "  ");
+          L.push(ind + "</div>");
+        }
+      });
+    }
+    items.forEach(function(it){
+      var bl = real(it.blocks);
+      if (!bl.length){ err.push("「Q&A」シートの " + it.no + " 行目の「Q」に、答え(種類が「A」の行)がありません。"); return; }
+      bl.forEach(function(b){ if (b.k === "fold" && !real(b.blocks).length) err.push("「Q&A」シートの " + b.no + " 行目の「ボタン(ここから)」の中に、行がありません。"); });
+      L.push(I6 + '<div class="qa-item">');
+      L.push(I8 + '<button type="button" class="qa-row qa-q" aria-expanded="false"><span class="qa-mark">Q.</span>' + wrapT('<span class="qa-text"', "</span>", [it.q]) + '<span class="qa-pm" aria-hidden="true"></span></button>');
+      if (bl.length === 1 && bl[0].k === "para") L.push(I8 + '<div class="qa-row qa-a" hidden><span class="qa-mark">A.</span>' + wrapT('<span class="qa-text"', "</span>", bl[0].lines) + "</div>");
+      else {
+        L.push(I8 + '<div class="qa-row qa-a" hidden><span class="qa-mark">A.</span><div class="qa-text qa-body">');
+        emit(bl, I8 + "  ");
+        L.push(I8 + "</div></div>");
+      }
+      L.push(I6 + "</div>");
+    });
+    if (!err.length) R.lines = L;
+    return R;
+  }
+
+  // ---------- data.js・lang.js を読む ----------
+  function parseJs(text, keys){
+    var d = { eol: text.indexOf("\r\n") >= 0 ? "\r\n" : "\n", blocks: {}, missing: [] };
+    d.lines = text.split(d.eol);
+    keys.forEach(function(key){
+      var s = -1, e = -1, i, re = new RegExp('^\\s*"' + key + '":\\s*\\[\\s*$');
+      for (i = 0; i < d.lines.length; i++){
+        if (s < 0){ if (re.test(d.lines[i])) s = i; }
+        else if (/^\s*\],?\s*$/.test(d.lines[i])){ e = i; break; }
+      }
+      if (s < 0 || e < 0){ d.missing.push(key); return; }
+      var items = [], bad = 0, im = null;
+      for (i = s + 1; i < e; i++){
+        var t = d.lines[i].trim().replace(/^,/, "").replace(/,$/, "").trim();
+        if (!t || t.indexOf("//") === 0) continue;
+        if (!im) im = /^(\s*)/.exec(d.lines[i]);
+        try { items.push(JSON.parse(t)); } catch (err){ bad++; }
+      }
+      d.blocks[key] = { start: s, end: e, items: items, bad: bad, indent: im ? im[1] : "    " };
+    });
+    return d;
+  }
+  function assemble(d, lists){
+    var lines = d.lines.slice();
+    Object.keys(lists).map(function(k){ return [k, d.blocks[k]]; }).sort(function(a, b){ return b[1].start - a[1].start; }).forEach(function(p){
+      var arr = lists[p[0]], b = p[1];
+      var body = arr.map(function(o, i){ return b.indent + dump(o) + (i < arr.length - 1 ? "," : ""); });
+      lines = lines.slice(0, b.start + 1).concat(body, lines.slice(b.end));
+    });
+    return lines.join(d.eol);
+  }
+
+  // ---------- index.html を読む ----------
+  var NEWS_RE = /^\{\s*id:\s*("(?:[^"\\]|\\.)*")\s*,\s*date:\s*("(?:[^"\\]|\\.)*")\s*,\s*text:\s*("(?:[^"\\]|\\.)*")\s*(?:,\s*banner:\s*(true|false)\s*)?\},?$/;
+  // お知らせの一覧の中の、見出し・文・すきまの行
+  var DECO_RE = /^\{\s*kind:\s*"(h|p|gap)"\s*(?:,\s*text:\s*("(?:[^"\\]|\\.)*")\s*)?\},?$/;
+  // 変換ページが作り直す部分(目印の行にはさまれた部分)。[名前, 目印に書いてある名前, シートの名前]
+  var MARKS = [["about", "このツールについて"], ["how", "使い方"], ["qa", "Q&A"]];
+  function markText(name, pos){ return "変換ページ用の目印【" + name + "：" + pos + "】"; }
+  function parseIndex(text){
+    var d = { eol: text.indexOf("\r\n") >= 0 ? "\r\n" : "\n", missing: [], news: null, marks: {} }, L, i, s = -1, e = -1, t, m, im = null, items = [], entries = [], bad = 0, notes = 0;
+    L = d.lines = text.split(d.eol);
+    for (i = 0; i < L.length; i++){
+      if (s < 0){ if (/^\s*const NEWS = \[\s*$/.test(L[i])) s = i; }
+      else if (/^\s*\];\s*$/.test(L[i])){ e = i; break; }
+    }
+    if (s < 0 || e < 0) d.missing.push("お知らせ(「const NEWS = [」の行と、その下の「];」の行)");
+    else {
+      for (i = s + 1; i < e; i++){
+        t = L[i].trim();
+        if (!t) continue;
+        if (t.indexOf("//") === 0){ notes++; continue; }
+        if (!im) im = /^(\s*)/.exec(L[i]);
+        var o = null;
+        if ((m = NEWS_RE.exec(t))){ try { o = { id: JSON.parse(m[1]), date: JSON.parse(m[2]), text: JSON.parse(m[3]), banner: m[4] !== "false" }; } catch (err){ o = null; } if (o) items.push(o); }
+        else if ((m = DECO_RE.exec(t))){ try { o = { kind: m[1] }; if (m[1] !== "gap"){ if (!m[2]) o = null; else o.text = JSON.parse(m[2]); } } catch (err2){ o = null; } }
+        if (o) entries.push(o); else bad++;
+      }
+      d.news = { start: s, end: e, items: items, entries: entries, bad: bad, notes: notes, indent: im ? im[1] : "    " };
+    }
+    MARKS.forEach(function(mk){
+      var a = markText(mk[1], "ここから"), b = markText(mk[1], "ここまで"), s2 = -1, e2 = -1, na = 0, nb = 0, k;
+      for (k = 0; k < L.length; k++){
+        if (L[k].indexOf(a) >= 0){ na++; if (s2 < 0) s2 = k; }
+        if (L[k].indexOf(b) >= 0){ nb++; if (e2 < 0 && s2 >= 0 && k > s2) e2 = k; }
+      }
+      if (na !== 1 || nb !== 1 || e2 < 0) d.missing.push("「" + mk[1] + "」の目印の行(「" + a + "」と「" + b + "」が、1行ずつ)");
+      else d.marks[mk[0]] = { start: s2, end: e2, lines: L.slice(s2 + 1, e2) };
+    });
+    return d;
+  }
+  function newsLine(n){
+    if (n.kind) return '{ kind:"' + n.kind + '"' + (n.kind === "gap" ? "" : ", text:" + JSON.stringify(n.text)) + " },";
+    return "{ id:" + JSON.stringify(n.id) + ", date:" + JSON.stringify(n.date) + ", text:" + JSON.stringify(n.text) + (n.banner ? "" : ", banner:false") + " },";
+  }
+  function decoLabel(n){ return (n.kind === "h" ? "見出し：" : "文：") + n.text; }
+  function inlineScripts(text){
+    var out = [], re = /<script(?![^>]*\s(?:src|type)=)[^>]*>([\s\S]*?)<\/script>/gi, m;
+    while ((m = re.exec(text))) out.push(m[1]);
+    return out;
+  }
+  function scriptsOk(text){ try { inlineScripts(text).forEach(function(c){ new Function(c); }); return ""; } catch (e){ return e.message || "error"; } }
+  // HTML の1行を、画面に見える文にする(見比べた結果を、読める形で出すため)
+  function visible(line){
+    var t = String(line).replace(/<svg[\s\S]*?<\/svg>/g, "[コピー]").replace(/<thead>[\s\S]*?<\/thead>/g, "").replace(/<span class="about-more-mark">[^<]*<\/span>/g, "(開閉ボタン)").replace(/<span class="qa-mark">([^<]*)<\/span>/g, "$1 ")
+      .replace(/(<button[^>]*class="formula-toggle[^>]*>)[+＋]?/g, "$1(開閉ボタン)").replace(/<br\s*\/?>/g, " ／ ").replace(/<\/t[dh]><t[dh][^>]*>/g, "　").replace(/<[^>]+>/g, "");
+    t = hUnesc(t).replace(/&#39;/g, "'").replace(/^(\s*／\s*)+|(\s*／\s*)+$/g, "").trim();
+    return /^[QA]\.$/.test(t) ? "" : t;
+  }
+  var TR_LINE = /^<tr><td>(.*?)<\/td><td>(.*)<\/td><\/tr>$/;
+  // 足す・消える文を、数える(同じ文が2回あるときも、正しく数える)
+  function bagDiff(olds, news){
+    var cnt = {}, res = { added: [], removed: [], changed: [], same: 0, order: false };
+    olds.forEach(function(x){ cnt["k:" + x] = (cnt["k:" + x] || 0) + 1; });
+    news.forEach(function(x){ if (cnt["k:" + x]){ cnt["k:" + x]--; res.same++; } else res.added.push({ label: x }); });
+    var c2 = {}; news.forEach(function(x){ c2["k:" + x] = (c2["k:" + x] || 0) + 1; });
+    olds.forEach(function(x){ if (c2["k:" + x]) c2["k:" + x]--; else res.removed.push(x); });
+    return res;
+  }
+
+  // index.html の、お知らせ・このツールについて・使い方・Q&A・検証の表について、新しい中身を作って確かめる
+  function processIndex(src, B){
+    var bn = B.news, bv = B.verify, all = [bn, bv, B.about, B.how, B.qa];
+    var P = { errors: [], warns: [], skipped: [], unknown: [], rows: [], changed: false, removed: 0, text: null, manual: null };
+    all.forEach(function(x){ P.errors = P.errors.concat(x.errors); P.warns = P.warns.concat(x.warns); P.skipped = P.skipped.concat(x.skipped); });
+    var d = parseIndex(src.text);
+    if (d.missing.length){ P.errors.push("選んだ index.html の中に、" + d.missing.join("、") + "が見つかりません。ぽこあ最適施設診断ツール フォルダの、いまの index.html を選んでいるか、確かめてください(目印の行がない、古い index.html は、使えません)。"); return P; }
+    if (P.errors.length) return P;
+    var blocks = [], manual = { eol: d.eol };
+
+    // ---- お知らせ ----
+    if (!bn.present) P.warns.push("Excel に、「お知らせ」シートが見つかりません。お知らせは、そのままにします。");
+    else {
+      var olds = d.news.items, news = bn.items, used = olds.map(function(){ return false; }), map = news.map(function(){ return -1; });
+      var pass = function(fn){ news.forEach(function(n, a){ if (map[a] >= 0) return; for (var j = 0; j < olds.length; j++){ if (!used[j] && fn(n, olds[j])){ used[j] = true; map[a] = j; return; } } }); };
+      pass(function(n, o){ return n.text === o.text && n.date === o.date; });
+      pass(function(n, o){ return n.text === o.text; });
+      pass(function(n, o){ return n.date === o.date; });
+      var ids = {}, df = { added: [], removed: [], changed: [], same: 0, order: false }, out = [], lab = function(x){ return x.date + "　" + x.text; }, seq = [];
+      olds.forEach(function(o){ ids["k:" + o.id] = true; });
+      news.forEach(function(n, a){
+        var o = map[a] >= 0 ? olds[map[a]] : null, it = { id: "", date: n.date, text: n.text, banner: n.banner };
+        if (o){
+          it.id = o.id; seq.push(map[a]);
+          var det = [];
+          if (o.date !== n.date) det.push(["", "日付：" + o.date + " → " + n.date]);
+          if (o.text !== n.text) det.push(["", "文：" + o.text + " → " + n.text]);
+          if (o.banner !== n.banner) det.push(["", "バナー：" + (o.banner ? "出す" : "出さない") + " → " + (n.banner ? "出す" : "出さない") + (n.banner ? "(出さないままにするときは、「お知らせ」シートの、その行の「バナー」の列に「×」を入れます)" : "")]);
+          if (det.length) df.changed.push({ key: lab(n), det: det }); else df.same++;
+        } else {
+          it.isNew = true; it.ymd = n.ymd;
+          df.added.push({ label: lab(n) + (n.banner ? "" : "(バナーには出さない)") });
+        }
+        out.push(it);
+      });
+      // 新しいお知らせの id(日付の8けた + 番号)。同じ日付のときは、古いもの(シートの上の行)から順に、1、2…と付ける
+      out.slice().reverse().forEach(function(it){
+        if (!it.isNew) return;
+        var k = 1; while (ids["k:" + it.ymd + "-" + k]) k++;
+        it.id = it.ymd + "-" + k; ids["k:" + it.id] = true;
+      });
+      olds.forEach(function(o, j){ if (!used[j]) df.removed.push(lab(o)); });
+      df.order = seq.some(function(v, k){ return k > 0 && seq[k - 1] > v; });
+      // お知らせのあいだに入る、見出し・文・すきまの行も合わせた、全部の行
+      var full = [], plain = [], newDeco = [], deco = function(x){ full.push(newsLine(x)); plain.push(false); if (x.kind !== "gap") newDeco.push(decoLabel(x)); };
+      out.forEach(function(it, a){
+        news[a].before.forEach(deco);
+        full.push(newsLine(it)); plain.push(!!it.isNew && !news[a].before.length && !news[a].after.length);
+        news[a].after.forEach(deco);
+      });
+      bn.tail.forEach(deco);
+      var oldFull = d.news.entries.map(newsLine);
+      var dd = bagDiff(d.news.entries.filter(function(x){ return x.kind && x.kind !== "gap"; }).map(decoLabel), newDeco);
+      df.added = df.added.concat(dd.added); df.removed = df.removed.concat(dd.removed);
+      var differs = oldFull.join("\n") !== full.join("\n");
+      if (differs && !df.added.length && !df.changed.length && !df.removed.length) df.order = true;
+      var need = !!(df.added.length || df.changed.length || df.removed.length || d.news.bad || df.order || differs);
+      if (d.news.bad) P.warns.push("いまの index.html のお知らせに、書き方がこわれた行が " + d.news.bad + " 行あります(新しい内容に入れかわります)。");
+      if (need && d.news.notes) P.warns.push("いまの index.html のお知らせの一覧の中に、メモの行(// で始まる行)が " + d.news.notes + " 行あります。方法Aで入れかえると、その行は消えます。");
+      if (need) P.changed = true;
+      P.removed += df.removed.length;
+      P.rows.push({ def: ["news", "お知らせ", "label", "", true, "並び順が、変わります(日付の新しい順。同じ日付のときは、シートの下の行が上)。"], df: df, oldCount: olds.length, newCount: out.length, need: need });
+      var lines = full.map(function(x){ return d.news.indent + x; }), nAdd = 0;
+      while (nAdd < plain.length && plain[nAdd]) nAdd++;
+      blocks.push({ b: d.news, lines: lines, check: full.join("\n"), key: "news" });
+      manual.news = { mode: !need ? "none" : (nAdd && !d.news.bad && full.slice(nAdd).join("\n") === oldFull.join("\n") ? "add" : "all"), add: lines.slice(0, nAdd), all: lines };
+    }
+
+    // ---- このツールについて(検証の表をふくむ)・使い方・Q&A ----
+    var noTr = function(x){ return !TR_LINE.test(x.trim()); };
+    MARKS.forEach(function(mk){
+      var key = mk[0], name = mk[1], bp = B[key], blk = d.marks[key];
+      if (!bp.present){ P.warns.push("Excel に、「" + name + "」シートが見つかりません。「" + name + "」は、そのままにします。"); return; }
+      var newL = bp.lines, oldL = blk.lines, df = bagDiff((key === "about" ? oldL.filter(noTr) : oldL).map(visible).filter(Boolean), (key === "about" ? newL.filter(noTr) : newL).map(visible).filter(Boolean));
+      var same = (key === "about" ? oldL.filter(noTr).join("\n") === newL.filter(noTr).join("\n") : oldL.join("\n") === newL.join("\n"));
+      if (!same && !df.added.length && !df.removed.length) df.order = true;
+      var need = !same;
+      if (need) P.changed = true;
+      P.removed += df.removed.length;
+      P.rows.push({ def: [key, name, "label", "", true, "文は同じで、並び順や、見た目(種類・すきま・ボタンなど)が、変わります。"], df: df, oldCount: df.same + df.removed.length, newCount: df.same + df.added.length, need: need });
+      manual[key] = { mode: need ? "all" : "none", all: newL, add: [] };
+      if (key === "about"){
+        // 検証の表(「このツールについて」の中に入っている)
+        var vo = [], vn = bv.present && bp.usesVerify ? bv.items : [], om = {}, nm = {}, vf = { added: [], removed: [], changed: [], same: 0, order: false }, vlab = function(x){ return x.ver + "　" + x.who; }, vbad = 0;
+        oldL.forEach(function(x){
+          var t = x.trim(), m = TR_LINE.exec(t);
+          if (m) vo.push({ ver: hUnesc(m[1]), who: hUnesc(m[2].replace(/<span class="name-sep">、<\/span>/g, "、").replace(/<span data-only-ja>様<\/span>/g, "様").replace(/<[^>]+>/g, "")), line: t });
+          else if (/^<tr\b/.test(t)) vbad++;
+        });
+        vo.forEach(function(o){ om["k:" + o.ver] = o; }); vn.forEach(function(n){ nm["k:" + n.ver] = n; });
+        vn.forEach(function(n){
+          var o = om["k:" + n.ver];
+          if (!o){ vf.added.push({ label: vlab(n) }); }
+          else if (o.line === n.line) vf.same++;
+          else vf.changed.push({ key: "Ver. " + n.ver, det: [["", "検証者：" + o.who + " → " + n.who]] });
+        });
+        vo.forEach(function(o){ if (!nm["k:" + o.ver]) vf.removed.push(vlab(o)); });
+        vf.order = vo.filter(function(o){ return nm["k:" + o.ver]; }).map(function(o){ return o.ver; }).join("\n") !== vn.filter(function(n){ return om["k:" + n.ver]; }).map(function(n){ return n.ver; }).join("\n");
+        var vneed = !!(vf.added.length || vf.changed.length || vf.removed.length || vbad || vf.order);
+        if (vbad) P.warns.push("いまの index.html の検証の表に、書き方がこわれた行が " + vbad + " 行あります(新しい内容に入れかわります)。");
+        if (vneed) P.changed = true;
+        P.removed += vf.removed.length;
+        if (bv.present) P.rows.push({ def: ["verify", "検証の表", "label", "", true, "並び順が、変わります(「Ver.検証管理」シートの、上からの順番になります)。"], df: vf, oldCount: vo.length, newCount: vn.length, need: vneed });
+        if (!need && vneed){
+          // 表の行を、いちばん下に足すだけのとき(表が1つのとき)は、足す行だけを貼る方法も出す
+          var nA = vf.added.length, oneTable = newL.filter(function(x){ return /^\s*<\/tbody>\s*$/.test(x); }).length === 1;
+          var onlyAdd = nA && oneTable && !vf.changed.length && !vf.removed.length && !vf.order && !vbad && vn.slice(0, vn.length - nA).map(function(n){ return n.line; }).join("\n") === vo.map(function(o){ return o.line; }).join("\n");
+          var trL = newL.filter(function(x){ return TR_LINE.test(x.trim()); });
+          manual.about = { mode: onlyAdd ? "add" : "all", all: newL, add: onlyAdd ? trL.slice(trL.length - nA) : [] };
+        }
+      }
+      blocks.push({ b: blk, lines: newL, check: newL.join("\n"), key: key });
+    });
+
+    var bad0 = scriptsOk(src.text);
+    if (bad0){ P.broken = true; P.changed = true; }
+    if (!P.changed) return P;
+    var L = d.lines.slice();
+    blocks.sort(function(a, b){ return b.b.start - a.b.start; }).forEach(function(x){ L = L.slice(0, x.b.start + 1).concat(x.lines, L.slice(x.b.end)); });
+    var nt = L.join(d.eol), ok = true, bad1 = scriptsOk(nt);
+    if (bad1){ ok = false; P.errors.push("できあがった index.html に、書き方の間違いがあります。変換ページが作り直す部分ではない場所に、もともと間違いがある可能性があります(" + bad1 + ")。"); }
+    if (ok){
+      var chk = parseIndex(nt);
+      if (chk.missing.length || blocks.some(function(x){ return x.key === "news" ? (chk.news.bad || chk.news.entries.map(newsLine).join("\n") !== x.check) : chk.marks[x.key].lines.join("\n") !== x.check; })){
+        ok = false; P.errors.push("できあがった index.html の確認で、問題が見つかりました。このページの不具合の可能性があります。");
+      }
+    }
+    if (ok){ P.text = nt; P.manual = manual; }
+    return P;
+  }
+
+  // ---------- 見比べる ----------
+  var LABEL = { likes: "好物", dislike: "苦手", size: "ｻｲｽﾞ", env: "環境", types: "ﾀｲﾌﾟ", livable: "居住可否", usage: "用途", attrs: "属性", recipe: "ﾚｼﾋﾟ", group: "グループ", en: "英語", ko: "韓国語", zhHans: "中国語(簡体字)", zhHant: "中国語(繁体字)" };
+  function show(k, v){
+    if (v === undefined || v === null) return "(なし)";
+    if (k === "livable") return v ? "〇" : "×";
+    if (k === "recipe") return v ? "有" : "無";
+    if (Array.isArray(v)) return v.length ? v.join("・") : "(なし)";
+    return String(v);
+  }
+  function diffList(oldItems, newItems, keyField, kind){
+    var om = {}, nm = {}, res = { added: [], removed: [], changed: [], same: 0, order: false };
+    oldItems.forEach(function(o){ if (o && o[keyField] != null) om[o[keyField]] = o; });
+    newItems.forEach(function(o){ nm[o[keyField]] = o; });
+    newItems.forEach(function(n){
+      var o = om[n[keyField]];
+      if (!o){ res.added.push(n); return; }
+      if (dump(o) === dump(n)){ res.same++; return; }
+      var det = [];
+      if (kind === "facility"){
+        var of = o.furniture || [], ol = {}, nl = {}, add = [], del = [], lv = [];
+        of.forEach(function(x){ ol[x.name] = x.level; }); n.furniture.forEach(function(x){ nl[x.name] = x.level; });
+        n.furniture.forEach(function(x){ if (!(x.name in ol)) add.push(x.name + "(レベル" + x.level + ")"); else if (ol[x.name] !== x.level) lv.push(x.name + "(レベル " + ol[x.name] + " → " + x.level + ")"); });
+        of.forEach(function(x){ if (!(x.name in nl)) del.push(x.name); });
+        if (add.length) det.push(["plus", "＋ 足す：" + add.join("、")]);
+        if (del.length) det.push(["minus", "－ 外す：" + del.join("、")]);
+        if (lv.length) det.push(["", "レベルが変わる：" + lv.join("、")]);
+        if (!add.length && !del.length && !lv.length) det.push(["", "家具の並び順だけが、変わります。"]);
+      } else {
+        var ks = Object.keys(o).concat(Object.keys(n)).filter(function(k, i, a){ return a.indexOf(k) === i && k !== keyField; });
+        ks.forEach(function(k){ if (dump(o[k]) !== dump(n[k])) det.push(["", (LABEL[k] || k) + "：" + show(k, o[k]) + " → " + show(k, n[k])]); });
+      }
+      res.changed.push({ key: n[keyField], det: det });
+    });
+    oldItems.forEach(function(o){ if (o && o[keyField] != null && !nm[o[keyField]]) res.removed.push(o[keyField]); });
+    var a = oldItems.filter(function(o){ return o && nm[o[keyField]]; }).map(function(o){ return o[keyField]; }).join("\n");
+    var b = newItems.filter(function(o){ return om[o[keyField]]; }).map(function(o){ return o[keyField]; }).join("\n");
+    res.order = a !== b;
+    return res;
+  }
+
+  // ---------- 1つのファイル(data.js か lang.js)について、新しい中身を作って確かめる ----------
+  function processFile(which, src, built, defs, fileLabel){
+    // defs: [ [一覧の名前, 見出し, 名前の列, 種類, 並び順が大事か] ]
+    var P = { errors: built.errors.slice(), warns: built.warns.slice(), skipped: built.skipped.slice(), unknown: built.unknown || [], rows: [], changed: false, removed: 0, text: null };
+    var keys = defs.map(function(x){ return x[0]; }), d = parseJs(src.text, keys);
+    if (d.missing.length){ P.errors.push("選んだ " + fileLabel + " の中に、一覧(" + d.missing.map(function(k){ return '"' + k + '": ['; }).join("、") + " の行)が見つかりません。" + fileLabel + " を選んでいるか、確かめてください。"); return P; }
+    if (P.errors.length) return P;
+    defs.forEach(function(def){
+      var b = d.blocks[def[0]], df = diffList(b.items, built.lists[def[0]], def[2], def[3]);
+      if (b.bad) P.warns.push("いまの " + fileLabel + " の「" + def[1] + "」の一覧に、書き方がこわれた行が " + b.bad + " 行あります(新しい内容に入れかわります。変わるところの一覧には、出ません)。");
+      var need = df.added.length || df.removed.length || df.changed.length || b.bad || (def[4] && df.order);
+      if (need) P.changed = true;
+      P.removed += df.removed.length;
+      P.rows.push({ def: def, df: df, oldCount: b.items.length, newCount: built.lists[def[0]].length, need: !!need });
+    });
+    try { new Function(src.text); } catch (e0){ P.broken = true; P.changed = true; }
+    if (!P.changed) return P;
+    var nt = assemble(d, built.lists), ok = true;
+    try { new Function(nt); }
+    catch (e){ ok = false; P.errors.push("できあがった " + fileLabel + " に、書き方の間違いがあります。一覧ではない場所に、もともと間違いがある可能性があります(" + e.message + ")。"); }
+    if (ok){
+      var chk = parseJs(nt, keys);
+      if (chk.missing.length || keys.some(function(k){ return chk.blocks[k].bad || chk.blocks[k].items.map(dump).join("\n") !== built.lists[k].map(dump).join("\n"); })){
+        ok = false; P.errors.push("できあがった " + fileLabel + " の確認で、問題が見つかりました。このページの不具合の可能性があります。");
+      }
+    }
+    if (ok) P.text = nt;
+    return P;
+  }
+  var DATA_DEFS = [["pokemons", "ポケモン", "name", "", false], ["furniture", "家具", "name", "", false], ["facilities", "施設", "name", "facility", true]];
+  var LANG_DEFS = LANG_SHEETS.map(function(x){ return [x[0], "翻訳：" + x[2], "ja", "", false]; });
+
+  // data.js に入る名前に、翻訳があるかを調べる
+  function coverage(bd, bl){
+    var w = [], has = function(key){ var m = {}; (bl.lists[key] || []).forEach(function(o){ m[nk(o.ja)] = true; }); return m; };
+    if (!bd.lists.pokemons || !bl.lists.pokemon) return w;
+    [["pokemons", "pokemon", "ポケモン", "言語(ポケモン)"], ["furniture", "furniture", "家具", "言語(家具)"], ["facilities", "facilities", "施設", "言語(施設)"]].forEach(function(p){
+      var m = has(p[1]), miss = bd.lists[p[0]].filter(function(o){ return !m[nk(o.name)]; }).map(function(o){ return o.name; });
+      if (miss.length) w.push("翻訳がまだない" + p[2] + "(ほかの言語でも、日本語の名前のまま出ます。「" + p[3] + "」シートを確かめてください)：" + miss.slice(0, 30).join("、") + (miss.length > 30 ? " ほか" + (miss.length - 30) + "件" : ""));
+    });
+    var am = has("attrs"), na = {};
+    bd.lists.pokemons.forEach(function(o){ o.likes.concat(o.dislike ? [o.dislike] : []).forEach(function(x){ if (!am[nk(x)]) na[x] = true; }); });
+    bd.lists.furniture.forEach(function(o){ o.attrs.forEach(function(x){ if (!am[nk(x)]) na[x] = true; }); });
+    if (Object.keys(na).length) w.push("「言語(属性)」シートに翻訳がない属性(新しい属性か、書き間違い)：" + Object.keys(na).join("、"));
+    return w;
+  }
+
+  // ---------- 画面に出す ----------
+  function renderRows(P){
+    var h = "";
+    P.rows.forEach(function(r){
+      var df = r.df, def = r.def;
+      if (!r.need) return;
+      h += '<details open><summary>' + esc(def[1]) + "：足す " + df.added.length + " 件・変わる " + df.changed.length + " 件・消える " + df.removed.length + " 件</summary>";
+      df.added.slice(0, 200).forEach(function(o){
+        var extra = def[3] === "facility" ? "(家具 " + o.furniture.length + " 個)" : (o.ja ? "(" + o.en + ")" : "");
+        h += '<div class="item"><span class="tag new">足す</span><b>' + esc(o[def[2]]) + "</b>" + esc(extra) + "</div>";
+      });
+      if (df.added.length > 200) h += '<div class="muted">ほか ' + (df.added.length - 200) + " 件</div>";
+      df.changed.slice(0, 200).forEach(function(c){
+        h += '<div class="item"><span class="tag chg">変わる</span><b>' + esc(c.key) + '</b></div><div class="detail">' + c.det.map(function(x){ return '<div class="' + x[0] + '">' + esc(x[1]) + "</div>"; }).join("") + "</div>";
+      });
+      if (df.changed.length > 200) h += '<div class="muted">ほか ' + (df.changed.length - 200) + " 件</div>";
+      df.removed.slice(0, 200).forEach(function(k){ h += '<div class="item"><span class="tag del">消える</span><b>' + esc(k) + "</b></div>"; });
+      if (df.removed.length > 200) h += '<div class="muted">ほか ' + (df.removed.length - 200) + " 件</div>";
+      if (def[4] && df.order) h += '<div class="item">' + esc(def[5] || "並び順が、変わります(Excel の表の、左からの順番になります)。") + "</div>";
+      h += "</details>";
+    });
+    return h;
+  }
+  function summaryTable(parts){
+    var h = '<table><tr><th>ファイル</th><th>種類</th><th>足す</th><th>変わる</th><th>消える</th><th>変わらない</th><th>合計(新しい件数)</th></tr>';
+    parts.forEach(function(p){
+      p[1].rows.forEach(function(r){
+        var c = function(n){ return '<td class="n' + (n ? " hit" : "") + '">' + n + "</td>"; };
+        h += "<tr><td>" + p[0] + "</td><td>" + esc(r.def[1]) + "</td>" + c(r.df.added.length) + c(r.df.changed.length) + c(r.df.removed.length) + '<td class="n">' + r.df.same + '</td><td class="n">' + fmt(r.newCount) + "</td></tr>";
+      });
+    });
+    return h + "</table>";
+  }
+  function setStatus(id, cls, html){ var e = $(id); e.className = "status" + (cls ? " " + cls : ""); e.innerHTML = html; }
+
+  function run(){
+    var seq = ++state.seq, out = { d: null, l: null, i: null }, html = "";
+    state.out = out; state.done = false;
+    $("chkD").checked = false; $("chkL").checked = false; $("chkI").checked = false;
+    if (!canConvert()){ clearResult(); return; }
+    var book = state.x.book, bn = buildNews(book), bv = buildVerify(book), ba = buildAbout(book, bv), bh = buildHow(book), bq = buildQa(book);
+    var B = { news: bn, verify: bv, about: ba, how: bh, qa: bq }, sheetParts = [bn, ba, bh, bq, bv], pairs = [], partErrs = [];
+    sheetParts.forEach(function(x){ pairs = pairs.concat(x.pairs); x.errors.forEach(function(e){ if (partErrs.indexOf(e) < 0) partErrs.push(e); }); });
+    var bd = buildData(book), bl = buildLang(book, pairs), parts = [], errs = [], warns = [], skipped = [], unknown = [];
+    // 種類の列があるシートに、直すところがあるあいだは、lang.js と index.html は、作らない(中途半端な内容で、上書きしないため)
+    var blocked = function(){ return { errors: partErrs.slice(), blocked: true, warns: [], skipped: [], unknown: [], rows: [], changed: false, removed: 0, text: null }; };
+    if (state.d){ out.d = processFile("d", state.d, bd, DATA_DEFS, "data.js"); parts.push(["data.js", out.d]); }
+    if (state.l){ out.l = partErrs.length ? blocked() : processFile("l", state.l, bl, LANG_DEFS, "lang.js"); parts.push(["lang.js", out.l]); }
+    if (state.i){ out.i = partErrs.length ? blocked() : processIndex(state.i, B); parts.push(["index.html", out.i]); }
+    if (seq !== state.seq) return;
+    if ((state.l || state.i) && partErrs.length) partErrs.forEach(function(e){ errs.push("【Excel】" + e); });
+    if (state.l || state.i) sheetParts.forEach(function(x){ x.skipped.forEach(function(e){ if (skipped.indexOf(e) < 0) skipped.push(e); }); x.warns.forEach(function(e){ warns.push(e); }); });
+    parts.forEach(function(p){
+      if (!p[1].blocked) p[1].errors.forEach(function(e){ errs.push("【" + p[0] + "】" + e); });
+      p[1].warns.forEach(function(e){ warns.push(e); });
+      p[1].skipped.forEach(function(e){ if (skipped.indexOf(e) < 0) skipped.push(e); });
+      unknown = unknown.concat(p[1].unknown);
+    });
+    if (!bd.errors.length && !bl.errors.length) warns = warns.concat(coverage(bd, bl));
+    // 種類の列があるシートの文に、翻訳が、そろっているか
+    if ((state.i || state.l) && bl.lists.ui && !partErrs.length){
+      var uiHas = {}, noTr = {}; bl.lists.ui.forEach(function(o){ uiHas["k:" + o.ja] = true; });
+      pairs.forEach(function(p){ if (uiHas["k:" + p.ja]) return; var a = noTr[p.sheet] = noTr[p.sheet] || []; if (a.indexOf(p.ja) < 0) a.push(p.ja); });
+      Object.keys(noTr).forEach(function(sh){ warns.push("翻訳がまだない文(ほかの言語でも、日本語の文のまま出ます。「" + sh + "」シートの、その行の、英語・韓国語・中国語(簡体字)・中国語(繁体字)の列に、翻訳を入れてください)：" + noTr[sh].join(" ／ ")); });
+    }
+    if (out.i && !state.l && out.i.rows.some(function(r){ return r.need && r.def[0] !== "verify"; })) warns.push("足した文や、直した文の翻訳は、lang.js に入ります。手順1で lang.js も選んで、もう一度「変換する」を押し、下の「4」も行ってください。");
+    warns = warns.filter(function(w, k){ return warns.indexOf(w) === k; });
+
+    if (errs.length) html += '<div class="box err"><h3>直すところが、あります(直すまで、そのファイルは、コピーできません)</h3>' + ul(errs) + (unknown.length ? ul(unknown, 60) : "") + "<p>Excel(または、選んだファイル)を直して保存してから、手順1で、直したファイルを選び直して、もう一度「変換する」ボタンを押してください。</p></div>";
+    if (skipped.length) html += '<div class="box warn"><h3>入力が足りないので、今回は入れないもの(' + skipped.length + ' 件)</h3><p>Excel の入力がそろったら、もう一度このページで変換すると、入ります。</p>' + ul(skipped, 200) + "</div>";
+    if (warns.length) html += '<div class="box warn"><h3>注意(確かめてください)</h3>' + ul(warns) + "</div>";
+
+    var withRows = parts.filter(function(p){ return p[1].rows.length; });
+    if (withRows.length){
+      html += '<div class="box info"><h3>まとめ</h3>' + summaryTable(withRows) + '<p class="muted">色の付いた数字が、今回、変わるところです。</p></div>';
+      withRows.forEach(function(p){
+        var P = p[1];
+        if (P.removed) html += '<div class="box err"><h3>' + p[0] + " から消えるもの：" + P.removed + " 件</h3><p>いまの " + p[0] + " にあって、Excel にない(または、入力が足りなくなった)ものです。このまま進めると、" + p[0] + " から消えます。名前を変えたときも、ここに出ます。下の一覧の「消える」を、確かめてください。</p></div>";
+        if (P.broken && P.text) html += '<div class="box warn"><h3>いまの ' + p[0] + " に、書き方の間違いがあります</h3><p>カンマ(,)の抜けや重なりなどで、このままでは、ツールが動きません。下の手順" + (p[0] === "index.html" ? "(方法A)" : "") + "で、新しいファイルに入れかえると、直ります。</p></div>";
+        if (P.changed && P.rows.some(function(r){ return r.need; })) html += '<div class="box info"><h3>' + p[0] + " の、変わるところ</h3>" + renderRows(P) + "</div>";
+        if (!P.changed && !P.errors.length) html += '<div class="box ok"><h3>' + p[0] + "：変更は、ありません</h3><p>Excel の内容と、いまの " + p[0] + " は、同じ内容です。" + p[0] + " を直す必要は、ありません。</p></div>";
+        if (P.text) html += '<div class="box ok"><h3>新しい ' + p[0] + " が、できました</h3><p>" + (p[0] === "index.html" ? "お知らせ・このツールについて(検証の表をふくむ)・使い方・Q&A の部分のほかは" : "一覧ではない部分は") + "、1文字も変えていません。下の「" + STEP[p[0]] + "」に進んでください。</p></div>";
+      });
+    }
+    parts.forEach(function(p){ if (!p[1].rows.length && !p[1].errors.length && !p[1].changed) html += '<div class="box ok"><h3>' + p[0] + "：変更は、ありません</h3></div>"; });
+    if (!html) html = '<div class="box ok"><h3>変更は、ありません</h3></div>';
+    state.done = true;
+    $("result").innerHTML = html;
+    renderManual(out.i);
+    refresh();
+  }
+
+  // 方法B：足す行(コード)と、貼る場所の説明を出す
+  function whereAll(name){
+    var a = markText(name, "ここから"), b = markText(name, "ここまで");
+    return ["メモ帳で <code>index.html</code> を開き、<kbd>Ctrl</kbd> + <kbd>F</kbd> で <code>" + esc(a) + "</code> を検索します。", "見つかった行の「1行下」の行の、先頭(いちばん左)をクリックします。", "下へスクロールして、<code>" + esc(b) + "</code> と書いてある行を探します(<kbd>Ctrl</kbd> + <kbd>F</kbd> で検索すると、選んだ場所が外れるので、スクロールで探します)。", "<kbd>Shift</kbd>(シフト)キーを押したまま、その行の「1行上」の行の、最後尾をクリックします(2つの目印の行にはさまれた行が、全部選ばれます。目印の行そのものは、選びません)。", "<kbd>Ctrl</kbd> + <kbd>V</kbd> で貼り付けます(選んだ行が、新しい行に入れかわります)。<kbd>Ctrl</kbd> + <kbd>S</kbd> で保存します。"];
+  }
+  var WHERE = {
+    news: {
+      title: "お知らせ",
+      add: "メモ帳で <code>index.html</code> を開く → <kbd>Ctrl</kbd> + <kbd>F</kbd> で <code>const NEWS = [</code> を検索 → 見つかった <code>const NEWS = [</code> の行の最後尾にカーソルを合わせる → <kbd>Enter</kbd> で改行 → できた行に貼る → <kbd>Ctrl</kbd> + <kbd>S</kbd> で保存",
+      all: ["メモ帳で <code>index.html</code> を開き、<kbd>Ctrl</kbd> + <kbd>F</kbd> で <code>const NEWS = [</code> を検索します。", "見つかった行の「1行下」の行の、先頭(いちばん左)をクリックします。", "<kbd>Shift</kbd>(シフト)キーを押したまま、<code>];</code> だけが書いてある行の「1行上」の行の、最後尾をクリックします(お知らせの行が、全部選ばれます)。", "<kbd>Ctrl</kbd> + <kbd>V</kbd> で貼り付けます(選んだ行が、新しい行に入れかわります)。<kbd>Ctrl</kbd> + <kbd>S</kbd> で保存します。"]
+    },
+    about: {
+      title: "このツールについて(検証の表をふくむ)", addTitle: "検証の表",
+      add: "メモ帳で <code>index.html</code> を開く → <kbd>Ctrl</kbd> + <kbd>F</kbd> で <code>&lt;/tbody&gt;</code> を検索 → 見つかった行の「1行上」の行の最後尾にカーソルを合わせる → <kbd>Enter</kbd> で改行 → できた行に貼る → <kbd>Ctrl</kbd> + <kbd>S</kbd> で保存",
+      all: whereAll("このツールについて")
+    },
+    how: { title: "使い方", all: whereAll("使い方") },
+    qa: { title: "Q&A", all: whereAll("Q&A") }
+  };
+  function renderManual(P){
+    var el = $("manual"), h = "";
+    state.manual = {};
+    if (!P){ el.innerHTML = '<p class="muted">手順1で、Excel と <code>index.html</code> を選んで、手順2の「変換する」ボタンを押すと、ここに、貼り付ける行(コード)と、貼る場所が出ます。</p>'; return; }
+    if (P.errors.length){ el.innerHTML = '<p class="muted">手順2の「直すところ」を直すと、ここに、貼り付ける行(コード)と、貼る場所が出ます。</p>'; return; }
+    if (!P.changed || !P.manual){ el.innerHTML = '<p class="muted"><code>index.html</code> に、足す行は、ありません。</p>'; return; }
+    ["news", "about", "how", "qa"].forEach(function(k){
+      var m = P.manual[k], w = WHERE[k];
+      if (!m) return;
+      if (m.mode === "none"){ h += "<h4>" + esc(w.title) + "：足す行は、ありません</h4>"; return; }
+      var lines = m.mode === "add" ? m.add : m.all;
+      state.manual[k] = lines.join(P.manual.eol);
+      if (m.mode === "add") h += "<h4>" + esc(w.addTitle || w.title) + "：足す行(" + lines.length + " 行)</h4><p><b>貼る場所</b>：" + w.add + "</p>";
+      else h += "<h4>" + esc(w.title) + "：全部の行を、入れかえます(" + lines.length + " 行)</h4><p>行を足すだけでは、直せません(文や名前が変わる行、消える行、または、途中に入る行があるためです)。方法Aを使うのが、かんたんです。自分で貼るときは、いまの行を、下の行に、全部入れかえます。</p><p><b>貼る場所</b>：</p><ol>" + w.all.map(function(x){ return "<li>" + x + "</li>"; }).join("") + "</ol>";
+      h += '<pre class="code" id="code-' + k + '">' + esc(lines.join("\n")) + '</pre><div class="row"><button class="sub" type="button" data-k="' + k + '">この ' + lines.length + ' 行を、コピーする</button><span class="muted" id="mst-' + k + '"></span></div>';
+    });
+    if (P.removed) h += '<p class="muted">「消えるもの」があるときは、上の行に入れかえると、その行も消えます。</p>';
+    el.innerHTML = h;
+  }
+
+  // 「変換する」ボタンを押すまでは、何もしない。ファイルを選び直したときは、前の結果を消す(古い結果のまま、保存しないため)
+  function canConvert(){ return !!(state.x && state.x.book && (state.d || state.l || state.i)); }
+  var IDLE = '<p class="muted">手順1でファイルを選んでから、上の「変換する」ボタンを押すと、ここに結果が出ます。</p>';
+  function updateConvert(){
+    var ok = canConvert(), msg;
+    $("convert").disabled = !ok;
+    if (state.done) msg = "変換が終わりました。下に、結果が出ています(パソコンの中のファイルは、まだ、何も変わっていません)。";
+    else if (ok) msg = "準備ができました。「変換する」ボタンを押してください(押すまでは、何も始まりません)。";
+    else if (!state.x || !state.x.book) msg = "手順1で、Excel を選ぶと、ボタンが押せるようになります。";
+    else msg = "手順1で、data.js・lang.js・index.html のうち、作り直したいものを選ぶと、ボタンが押せるようになります。";
+    setStatus("stC", ok ? "ok" : "", esc(msg));
+  }
+  function clearResult(note){
+    state.seq++; state.out = { d: null, l: null, i: null }; state.done = false;
+    $("chkD").checked = false; $("chkL").checked = false; $("chkI").checked = false;
+    $("result").innerHTML = (note ? '<p class="muted">' + esc(note) + "</p>" : "") + IDLE;
+    renderManual(null); refresh();
+  }
+
+  function refresh(){
+    [["d", "D", "st3", "data.js"], ["l", "L", "st4", "lang.js"], ["i", "I", "st5", "index.html"]].forEach(function(a){
+      var P = state.out[a[0]], has = !!(P && P.text), need = has && P.removed > 0, ready = has && (!need || $("chk" + a[1]).checked);
+      $("conf" + a[1]).className = need ? "" : "hidden";
+      $("copy" + a[1]).disabled = !ready; $("dl" + a[1]).disabled = !ready;
+      var msg;
+      if (ready) msg = "準備ができました。ボタンをクリックしてください。";
+      else if (has) msg = "上のチェックを入れると、ボタンが押せるようになります。";
+      else if (P && !P.errors.length && !P.changed) msg = a[3] + " に、変更はありません。この手順は、いりません。";
+      else if (P && P.errors.length) msg = "手順2の「直すところ」を直すと、ボタンが押せるようになります。";
+      else msg = "手順2で「変換する」ボタンを押して、" + a[3] + " に変更があるときに、ボタンが押せるようになります。";
+      setStatus(a[2], ready ? "ok" : "", esc(msg));
+    });
+    updateConvert();
+  }
+
+  // ---------- ファイルを選ぶ ----------
+  function when(f){ return new Date(f.lastModified).toLocaleString("ja-JP"); }
+  function setX(f){
+    setStatus("stX", "", "読み込んでいます…");
+    return readXlsx(f).then(function(book){
+      state.x = { file: f, book: book, size: f.size, mod: f.lastModified };
+      setStatus("stX", "ok", "読み込みました：「" + esc(f.name) + "」(最後に保存した日時：" + esc(when(f)) + "。シート " + book.names.length + " 枚)");
+    }).catch(function(e){
+      state.x = null;
+      setStatus("stX", "ng", e && e.message === "old-browser" ? "このブラウザでは、Excel ファイルを読めません。新しい Chrome か Edge で、このページを開いてください。" : "「" + esc(f.name) + "」を、Excel ファイルとして読めませんでした。ぽこあマスタデータ.xlsx を選んでいるか、確かめてください。");
+    });
+  }
+  function setJs(f, forced){
+    return f.text().then(function(t){
+      t = t.replace(/^\uFEFF/, "");
+      var isD = /^\s*"pokemons":\s*\[\s*$/m.test(t), isL = /^\s*"ui":\s*\[\s*$/m.test(t), kind = isD ? "d" : (isL ? "l" : null);
+      if (forced && kind !== forced){
+        setStatus(forced === "d" ? "stD" : "stL", "ng", "「" + esc(f.name) + "」は、" + (forced === "d" ? "data.js" : "lang.js") + " ではないようです。選び直してください。");
+        state[forced] = null; return;
+      }
+      if (!kind) return "unknown";
+      state[kind] = { file: f, text: t };
+      setStatus(kind === "d" ? "stD" : "stL", "ok", "読み込みました：「" + esc(f.name) + "」(最後に保存した日時：" + esc(when(f)) + ")");
+    });
+  }
+  function setHtml(f, forced){
+    return f.text().then(function(t){
+      t = t.replace(/^\uFEFF/, "");
+      if (!/^\s*const NEWS = \[\s*$/m.test(t)){
+        if (forced){ setStatus("stI", "ng", "「" + esc(f.name) + "」は、ツールの index.html ではないようです(「const NEWS = [」の行が、見つかりません)。選び直してください。"); state.i = null; return; }
+        return "unknown";
+      }
+      state.i = { file: f, text: t };
+      setStatus("stI", "ok", "読み込みました：「" + esc(f.name) + "」(最後に保存した日時：" + esc(when(f)) + ")");
+    });
+  }
+  function take(files, forced){
+    var jobs = [], other = [], wasDone = state.done;
+    Array.prototype.forEach.call(files, function(f){
+      if (forced === "x" || (!forced && /\.xls[xm]$/i.test(f.name))) jobs.push(setX(f));
+      else if (forced === "i" || (!forced && /\.html?$/i.test(f.name))) jobs.push(setHtml(f, forced).then(function(r){ if (r === "unknown") other.push(f.name); }));
+      else if (forced || /\.js$/i.test(f.name)) jobs.push(setJs(f, forced).then(function(r){ if (r === "unknown") other.push(f.name); }));
+      else other.push(f.name);
+    });
+    Promise.all(jobs).then(function(){
+      if (other.length) alert("次のファイルは、Excel・data.js・lang.js・index.html のどれでもないので、使いませんでした：\n" + other.join("\n"));
+      // ファイルを選んだだけでは、変換しない(「変換する」ボタンを押したときに、はじめて変換する)
+      clearResult(wasDone ? "ファイルを選び直したので、前の結果を消しました。" : "");
+    });
+  }
+  [["X", "x"], ["D", "d"], ["L", "l"], ["I", "i"]].forEach(function(a){
+    $("pick" + a[0]).addEventListener("click", function(){ $("file" + a[0]).value = ""; $("file" + a[0]).click(); });
+    $("file" + a[0]).addEventListener("change", function(e){ if (e.target.files.length) take(e.target.files, a[1]); });
+  });
+  document.addEventListener("dragover", function(e){ e.preventDefault(); $("card1").classList.add("drop"); });
+  document.addEventListener("dragleave", function(){ $("card1").classList.remove("drop"); });
+  document.addEventListener("drop", function(e){
+    e.preventDefault(); $("card1").classList.remove("drop");
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) take(e.dataTransfer.files, null);
+  });
+
+  // ---------- コピー・保存 ----------
+  // 選んだあとで、ファイルが書きかわっていないかを確かめる(古い内容で上書きしないため)
+  function fresh(which){
+    var s = state[which], x = state.x;
+    return Promise.all([
+      s.file.text().then(function(t){ return t.replace(/^\uFEFF/, "") === s.text; }).catch(function(){ return false; }),
+      x.file.slice(0, 16).arrayBuffer().then(function(){ return x.file.size === x.size && x.file.lastModified === x.mod; }).catch(function(){ return false; })
+    ]).then(function(r){ return r[0] ? (r[1] ? "" : "Excel") : FILES[which]; });
+  }
+  function copyText(t){
+    if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t).then(function(){ return true; }).catch(function(){ return legacyCopy(t); });
+    return Promise.resolve(legacyCopy(t));
+  }
+  function legacyCopy(t){
+    var ta = document.createElement("textarea"), ok = false;
+    ta.value = t; ta.style.position = "fixed"; ta.style.left = "-9999px"; document.body.appendChild(ta); ta.select();
+    try { ok = document.execCommand("copy"); } catch (e){ ok = false; }
+    document.body.removeChild(ta); return ok;
+  }
+  [["d", "D", "st3", "data.js"], ["l", "L", "st4", "lang.js"], ["i", "I", "st5", "index.html"]].forEach(function(a){
+    function guard(fn){
+      var P = state.out[a[0]]; if (!P || !P.text) return;
+      fresh(a[0]).then(function(stale){
+        if (stale){ setStatus(a[2], "ng", esc(stale + " が、選んだあとで書きかわっています。手順1で、もう一度、選び直して、「変換する」ボタンを押してください(古い内容で上書きしないためです)。")); return; }
+        fn(P.text);
+      });
+    }
+    $("copy" + a[1]).addEventListener("click", function(){
+      guard(function(text){
+        copyText(text).then(function(ok){
+          if (ok) setStatus(a[2], "ok", "<b>" + a[3] + " の新しい中身</b>を、コピーしました(" + fmt(text.length) + " 文字)。「メモ帳に貼り付ける方法」の手順で、メモ帳で <b>" + a[3] + "</b> に貼り付けてください。");
+          else setStatus(a[2], "ng", "コピーできませんでした。上の「ファイルとして保存する」ボタンを、使ってください。");
+        });
+      });
+    });
+    $("dl" + a[1]).addEventListener("click", function(){
+      guard(function(text){
+        var el = document.createElement("a");
+        el.href = URL.createObjectURL(new Blob([text], { type: a[0] === "i" ? "text/html" : "text/javascript" }));
+        el.download = a[3]; document.body.appendChild(el); el.click(); document.body.removeChild(el);
+        setTimeout(function(){ URL.revokeObjectURL(el.href); }, 2000);
+        setStatus(a[2], "ok", "<b>新しい " + a[3] + "</b> を、ダウンロードのフォルダに、保存しました(" + fmt(text.length) + " 文字)。下の手順2から、<b>ぽこあ最適施設診断ツール</b> フォルダに移して、古い " + a[3] + " と入れかえてください。");
+      });
+    });
+    $("chk" + a[1]).addEventListener("change", refresh);
+  });
+  // 方法Bの「この行を、コピーする」
+  $("manual").addEventListener("click", function(e){
+    var b = e.target && e.target.closest ? e.target.closest("button[data-k]") : null;
+    if (!b) return;
+    var k = b.getAttribute("data-k"), text = state.manual[k], st = $("mst-" + k);
+    if (!text || !state.i) return;
+    fresh("i").then(function(stale){
+      if (stale){ st.textContent = stale + " が、選んだあとで書きかわっています。手順1で、もう一度、選び直してください。"; return; }
+      copyText(text).then(function(ok){ st.textContent = ok ? "コピーしました。上の「貼る場所」に、貼り付けてください。" : "コピーできませんでした。上の黒い枠の中の行を、マウスで選んで、Ctrl + C でコピーしてください。"; });
+    });
+  });
+  $("convert").addEventListener("click", function(){ if (canConvert()) run(); });
+  $("reset").addEventListener("click", function(){ location.reload(); });
+  refresh();
+})();
+</script>
+</body>
+</html>
