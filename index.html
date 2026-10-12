@@ -228,6 +228,7 @@
   var $ = function(id){ return document.getElementById(id); };
   var ENVS = ["あかるい", "くらい", "すずしい", "あたたかい", "うるおっている", "乾そうしている"];
   var FENVS = ["照明", "冷房", "暖房", "潤い", "庇"];
+  var TASTES = ["あまい", "からい", "しぶい", "すっぱい", "にがい"];  // ポケモンの「好きな味」に書ける言葉(空欄もOK)
   var state = { x:null, d:null, l:null, i:null, out:{ d:null, l:null, i:null }, manual:{}, seq:0, done:false };
   var FILES = { d:"data.js", l:"lang.js", i:"index.html" }, STEP = { "data.js":"3", "lang.js":"4", "index.html":"5" };
 
@@ -366,7 +367,7 @@
     // ポケモン
     var tp = table(sh[nk("ポケモンリスト")], "ポケモン名"), pok = [], seen = {};
     if (!tp) R.errors.push("「ポケモンリスト」シートに、「ポケモン名」という見出しが見つかりません。");
-    else if (needHead(tp, "ポケモンリスト", ["環境", "好物1", "好物2", "好物3", "好物4", "好物5", "ｻｲｽﾞ", "ﾀｲﾌﾟ1", "ﾀｲﾌﾟ2", "苦手", "居住可否"], R.errors)){
+    else if (needHead(tp, "ポケモンリスト", ["環境", "好物1", "好物2", "好物3", "好物4", "好物5", "ｻｲｽﾞ", "ﾀｲﾌﾟ1", "ﾀｲﾌﾟ2", "苦手", "居住可否", "好きな味"], R.errors)){
       tp.recs.forEach(function(r){
         var n = S(g(r, "ポケモン名")); if (!n) return;
         var likes = [1, 2, 3, 4, 5].map(function(i){ return S(g(r, "好物" + i)); }), env = S(g(r, "環境")), size = num(g(r, "ｻｲｽﾞ")), lv = S(g(r, "居住可否")), miss = [];
@@ -375,10 +376,12 @@
         if (!S(g(r, "ﾀｲﾌﾟ1"))) miss.push("ﾀｲﾌﾟ1");
         if (typeof size === "string") miss.push("ｻｲｽﾞ(数字でない)");
         if (["", "〇", "○", "×"].indexOf(lv) < 0) miss.push("居住可否の書き方");
+        var taste = S(g(r, "好きな味"));
+        if (taste && TASTES.indexOf(taste) < 0) miss.push("好きな味の書き方(" + taste + ")");
         if (miss.length){ R.skipped.push("ポケモン「" + n + "」：" + miss.join("・")); return; }
         if (seen[n]){ R.errors.push("「ポケモンリスト」シートに、同じ名前のポケモンが2つあります：「" + n + "」"); return; }
         seen[n] = true;
-        pok.push({ name: n, likes: likes, dislike: S(g(r, "苦手")) || null, size: size, env: env, types: [S(g(r, "ﾀｲﾌﾟ1")), S(g(r, "ﾀｲﾌﾟ2"))].filter(Boolean), livable: lv !== "×" });
+        pok.push({ name: n, likes: likes, dislike: S(g(r, "苦手")) || null, size: size, env: env, types: [S(g(r, "ﾀｲﾌﾟ1")), S(g(r, "ﾀｲﾌﾟ2"))].filter(Boolean), livable: lv !== "×", taste: taste || null });
       });
     }
     // 家具グループ
@@ -394,12 +397,27 @@
     // 家具
     var tf = table(sh[nk("家具リスト")], "家具名"), fur = [], furNames = {}; seen = {};
     if (!tf) R.errors.push("「家具リスト」シートに、「家具名」という見出しが見つかりません。");
-    else if (needHead(tf, "家具リスト", ["用途", "ｻｲｽﾞ", "環境1", "環境2", "ﾚｼﾋﾟ", "属性1", "属性2", "属性3", "属性4", "属性5", "属性6", "属性7"], R.errors)){
+    else if (needHead(tf, "家具リスト", ["用途", "ｻｲｽﾞ", "環境1", "環境2", "環境数値1", "環境数値2", "ﾚｼﾋﾟ", "作りやすさﾚﾍﾞﾙ", "属性1", "属性2", "属性3", "属性4", "属性5", "属性6", "属性7"], R.errors)){
       tf.recs.forEach(function(r){
         var n = S(g(r, "家具名")); if (!n) return;
-        var attrs = [1, 2, 3, 4, 5, 6, 7].map(function(i){ return S(g(r, "属性" + i)); }).filter(Boolean), env = [S(g(r, "環境1")), S(g(r, "環境2"))].filter(Boolean), rc = S(g(r, "ﾚｼﾋﾟ")), size = num(g(r, "ｻｲｽﾞ")), miss = [];
+        var attrs = [1, 2, 3, 4, 5, 6, 7].map(function(i){ return S(g(r, "属性" + i)); }).filter(Boolean), env = [], envVal = [], rc = S(g(r, "ﾚｼﾋﾟ")), size = num(g(r, "ｻｲｽﾞ")), miss = [];
+        // 環境1・環境2(家具の分類)と、環境数値1・環境数値2(その分類の強さ。例：照明40、暖房60、冷房-60)を、組にして読む。
+        // 数値が空のとき(潤いなど、まだ数値が分からないとき)は null にする。
+        [1, 2].forEach(function(i){
+          var c = S(g(r, "環境" + i)), v = num(g(r, "環境数値" + i));
+          if (typeof v === "string"){ miss.push("環境数値" + i + "(数字でない)"); return; }
+          if (!c){ if (v !== null) miss.push("環境数値" + i + "(環境" + i + "が空)"); return; }
+          env.push(c); envVal.push(v);
+        });
         if (!S(g(r, "用途"))) miss.push("用途");
         if (rc !== "有" && rc !== "無") miss.push("ﾚｼﾋﾟ(有か無)");
+        // 作りやすさレベル(0〜3。レシピありの家具だけに使う。空でもよい。2026年10月12日に追加。仮住まいシミュレータが、作りやすい家具を選ぶときに使う)
+        // 数字の 0 も、ちゃんと 0 として読む(S() は 0 を空にするので、ここでは使わない)
+        var ezRaw = g(r, "作りやすさﾚﾍﾞﾙ"), ez = null;
+        if (ezRaw !== null && ezRaw !== undefined && String(ezRaw).trim() !== ""){
+          var ezT = String(ezRaw).normalize("NFKC").trim();
+          if (/^[0-3]$/.test(ezT)) ez = Number(ezT); else miss.push("作りやすさﾚﾍﾞﾙ(0〜3の数字)");
+        }
         if (!attrs.length) miss.push("属性(1つも入っていない)");
         if (typeof size === "string") miss.push("ｻｲｽﾞ(数字でない)");
         if (env.some(function(x){ return FENVS.indexOf(x) < 0; })) miss.push("環境1・環境2の書き方");
@@ -407,7 +425,11 @@
         if (seen[n]){ R.errors.push("「家具リスト」シートに、同じ名前の家具が2つあります：「" + n + "」"); return; }
         seen[n] = true;
         var o = { name: n, usage: S(g(r, "用途")), attrs: attrs, size: size, recipe: rc === "有" };
+        // レシピありで、作りやすさレベルが入っているときだけ、ease を付ける(レシピなしの家具には付けない)
+        if (o.recipe && ez !== null) o.ease = ez;
         if (env.length) o.env = env;
+        // 数値が1つでも入っているときだけ、envVal(env と同じ順番の数値。空は null)を付ける
+        if (envVal.some(function(v){ return v !== null; })) o.envVal = envVal;
         if (grp[n]) o.group = grp[n];
         fur.push(o); furNames[n] = true;
       });
@@ -1093,7 +1115,7 @@
   }
 
   // ---------- 見比べる ----------
-  var LABEL = { likes: "好物", dislike: "苦手", size: "ｻｲｽﾞ", env: "環境", types: "ﾀｲﾌﾟ", livable: "居住可否", usage: "用途", attrs: "属性", recipe: "ﾚｼﾋﾟ", group: "グループ", en: "英語", ko: "韓国語", zhHans: "中国語(簡体字)", zhHant: "中国語(繁体字)" };
+  var LABEL = { likes: "好物", dislike: "苦手", size: "ｻｲｽﾞ", env: "環境", envVal: "環境数値", types: "ﾀｲﾌﾟ", livable: "居住可否", taste: "好きな味", usage: "用途", attrs: "属性", recipe: "ﾚｼﾋﾟ", ease: "作りやすさﾚﾍﾞﾙ", group: "グループ", en: "英語", ko: "韓国語", zhHans: "中国語(簡体字)", zhHant: "中国語(繁体字)" };
   function show(k, v){
     if (v === undefined || v === null) return "(なし)";
     if (k === "livable") return v ? "〇" : "×";
