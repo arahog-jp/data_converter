@@ -121,6 +121,9 @@
   .shot-cell .xl.lowt{color:#B0261E;}
   .shot-cell.low.weak .xl.lowt{color:#9A5A00;}
   table.shot-t td.pic img.cut{background-color:#fff;background-image:linear-gradient(45deg,#E6E6E6 25%,transparent 25%,transparent 75%,#E6E6E6 75%),linear-gradient(45deg,#E6E6E6 25%,transparent 25%,transparent 75%,#E6E6E6 75%);background-size:10px 10px;background-position:0 0,5px 5px;}
+  .shot-cell.none input{margin-top:3px;}
+  .shot-cell.none.diff{background:var(--warn-soft);}
+  button.mini{font-size:12px;padding:2px 8px;margin:4px 0 0;min-height:0;}
 </style>
 </head>
 <body>
@@ -282,7 +285,7 @@
       <li>下の「画像を選ぶ」ボタンをクリックします。画像が入っているフォルダ(例：<code>C:\Users\Owner\Downloads\求職活動\PP\01_マスタデータ・ツール\ぽこあ最適施設診断ツール\99_雑口\訳資料\キット訳</code>)を開いて、<kbd>Ctrl</kbd> キーを押しながら <kbd>A</kbd> キーを押して(全部選ぶ)、「開く」をクリックします。エクスプローラーから、下の点線の枠の中へ、画像をドラッグして放しても、選べます。別のフォルダの画像も、続けて選ぶと、足されます。</li>
       <li>「読み取る」ボタンをクリックします。はじめて使うときは、文字を読むためのプログラムとデータ(1つの言語につき、2MB くらい)を、インターネットから読み込むので、時間がかかります(2回目からは、ブラウザに保存したデータを使うので、早くなります)。</li>
       <li>「言語のまとまり」で、まとまりごとの言語が、正しいかを確かめます。違うときは、▼の一覧から、正しい言語を選びます(選び直すと、その言語で読み直します)。<b>「要確認」と出たまとまり(とくに、中国語の簡体字と繁体字)は、必ず確かめてください。</b></li>
-      <li>「読み取った訳」の表で、文字が、画像(表の中の小さな画像)と同じかを確かめます。違うところは、四角の中をクリックして、直接直します。黄色のマスは、Excel の訳と違うところです(下に、Excel の訳が出ます)。ゲームの文字の画像で、後ろに赤や黄色の色が付いている字は、読み取りに自信がない字です(赤は、とくに自信がない字)。そのマスは、とくに念入りに見比べてください。</li>
+      <li>「読み取った訳」の表で、文字が、画像(表の中の小さな画像)と同じかを確かめます。違うところは、四角の中をクリックして、直接直します。黄色のマスは、Excel の訳と違うところです(下に、Excel の訳が出ます)。ゲームの文字の画像で、後ろに赤や黄色の色が付いている字は、読み取りに自信がない字です(赤は、とくに自信がない字)。そのマスは、とくに念入りに見比べてください。「(画像がありません)」のマスにも、四角の中をクリックして、手で入れられます(中国語の簡体字と繁体字が同じ字のときは、どちらか1つにまとまって、もう1つが「画像がありません」になります。そのときは、「中国語(簡体字)と同じにする」などのボタンをクリックすると、となりのマスの文字が入ります)。手順1で Excel を選んでおくと、表の行は、Excel の「家具リスト」シートの順番に並びます(シートにない家具は、いちばん下に並びます)。</li>
       <li>コピーしたい行だけ、表の左はしの□にチェックを付けます(はじめは、全部の行にチェックが付いています。「全部にチェックを付ける」「全部のチェックを外す」ボタンで、まとめて付けたり外したりできます)。「表をコピーする」ボタンをクリックして、Excel の「言語(家具)」シートの、いちばん下の空いている行の、A列のセルをクリックして、<kbd>Ctrl</kbd> キーを押しながら <kbd>V</kbd> キーを押して、貼り付けます(A列＝日本語、B列＝英語、C列＝韓国語、D列＝中国語(簡体字)、E列＝中国語(繁体字)の順で入ります)。すでにある家具の訳を直すときは、その行のセルを、手で直します。</li>
       <li>(必要なときだけ)家具の画像がほしいときは、表の下の「家具の画像を、PNG で保存する」ボタンをクリックします。チェックが付いている行の家具の絵を、背景を透明にした PNG 画像で、ダウンロードのフォルダ(<code>C:\Users\Owner\Downloads</code>)に保存します(2枚以上のときは、ZIP ファイルにまとめます。ZIP ファイルを右クリックして、「すべて展開」をクリックすると、画像が取り出せます)。家具は持ち物の画面のアイコン、キットはキットの画面の絵を書き出します(くらしのヒントの行は、書き出しません)。</li>
     </ol>
@@ -1590,7 +1593,7 @@
   var TESS_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
   // キットの名前の最後の「キット」(読み取りの、よくある間違い〔キツット・Kif など〕もふくむ)
   var KIT_RE = /\s*(キ\s*[ッツ]*\s*ト|k\s*i\s*[tf]|키\s*트|套\s*[组組]|[组組]\s*件|套\s*[装裝])$/i;
-  var shot = { off: {}, list: [], seq: 0, groups: [], rows: [], busy: false, workers: {}, libP: null, done: false };
+  var shot = { off: {}, man: {}, order: null, list: [], seq: 0, groups: [], rows: [], busy: false, workers: {}, libP: null, done: false };
   var SW = 1920, SH = 1080;
 
   function shotMsg(cls, html){ setStatus("stS", cls, html); }
@@ -2237,6 +2240,21 @@
     return out;
   }
 
+  // Excel の「家具リスト」シートの、家具の名前の順番(名前 → 何番目か)。表の行を、この順番に並べるために使う
+  function excelFurnOrder(){
+    if (!state.x || !state.x.book) return null;
+    var rows = state.x.book.sheets[nk("家具リスト")]; if (!rows) return null;
+    var t = table(rows, "家具名"); if (!t) return null;
+    var o = {}, i = 0;
+    t.recs.forEach(function(r){ var n = S(g(r, "家具名")); if (!n) return; var k = normV(n); if (!(k in o)) o[k] = i++; });
+    return i ? o : null;
+  }
+  // 表の行の、その言語のマスの文字(画像がないマスは、手で入れた文字)
+  function rowVal(r, L){
+    if (r.cells[L]) return cellValue(r.cells[L]);
+    var m = shot.man[r.anchor]; return (m && m[L]) || "";
+  }
+
   // ----- 同じ言語の画像を、まとめる -----
   function makeGroups(){
     var gs = [];
@@ -2406,6 +2424,20 @@
     });
     rows = mergeRows(rows);
     rows.sort(function(a, b){ return SHOT_KINDS.indexOf(a.type) - SHOT_KINDS.indexOf(b.type); });
+    // Excel の「家具リスト」シートに名前がある家具は、そのシートの順番に並べる(名前がない家具は、そのあとに、いままでの順番で並べる)
+    var ord = shot.order;
+    if (ord){
+      var pos = function(r){
+        var ks = [rowVal(r, "ja"), r.ex ? r.ex.ja : ""];
+        for (var j = 0; j < ks.length; j++){ var k = normV(ks[j]); if (k && k in ord) return ord[k]; }
+        return -1;
+      };
+      rows = rows.map(function(r, j){ return { r: r, p: pos(r), j: j }; }).sort(function(a, b){
+        if (a.p >= 0 && b.p >= 0) return a.p - b.p || a.j - b.j;
+        if (a.p >= 0) return -1; if (b.p >= 0) return 1;
+        return a.j - b.j;
+      }).map(function(o){ return o.r; });
+    }
     shot.rows = rows;
   }
   // 同じ名前の行(同じ家具を、ちがう場所で撮ったときなど)を、1つにまとめる
@@ -2486,7 +2518,7 @@
     h.push("</div>");
     // 表
     h.push("<h3 style=\"font-family:var(--font-head);font-size:17px;margin:14px 0 4px;\">読み取った訳(" + shot.rows.length + " 件)</h3>");
-    h.push("<p class=\"muted\">四角の中の文字は、クリックして直せます。小さな画像は、ゲームの画面の文字です。見比べて、違うところを直してください。黄色のマスは、Excel の訳と違うところです。ゲームの文字の画像で、字の後ろに<span style=\"background:#FFA8A8\">赤</span>や<span style=\"background:#FFE27A\">黄色</span>の色が付いているときは、その字の読み取りに、自信がありません(赤は、とくに自信がない字)。そのマスは、とくに念入りに見比べてください。左はしの□にチェックが付いている行だけを、コピーします。</p>");
+    h.push("<p class=\"muted\">四角の中の文字は、クリックして直せます。小さな画像は、ゲームの画面の文字です。見比べて、違うところを直してください。黄色のマスは、Excel の訳と違うところです。ゲームの文字の画像で、字の後ろに<span style=\"background:#FFA8A8\">赤</span>や<span style=\"background:#FFE27A\">黄色</span>の色が付いているときは、その字の読み取りに、自信がありません(赤は、とくに自信がない字)。そのマスは、とくに念入りに見比べてください。「(画像がありません)」のマスにも、手で入れられます。左はしの□にチェックが付いている行だけを、コピーします。" + (shot.order ? "行は、Excel の「家具リスト」シートの順番に並べています(シートにない家具は、いちばん下)。" : "") + "</p>");
     h.push("<div class=\"row\"><button id=\"shotAllOn\" class=\"sub\" type=\"button\">全部にチェックを付ける</button><button id=\"shotAllOff\" class=\"sub\" type=\"button\">全部のチェックを外す</button><span class=\"muted\" id=\"shotChkN\"></span></div>");
     h.push("<div class=\"shot-wrap\"><table class=\"shot-t\"><tr><th>コピー</th><th>行</th><th>絵</th>" + SHOT_LANGS.map(function(L){ return "<th>" + SHOT_LABEL[L] + "</th>"; }).join("") + "</tr>");
     var lowN = 0;
@@ -2496,7 +2528,16 @@
       h.push("<tr class=\"shot-row" + (on ? "" : " off") + "\"><td class=\"chkc\"><input type=\"checkbox\" data-r=\"" + r.anchor + "\"" + (on ? " checked" : "") + " aria-label=\"" + (i + 1) + " 行目をコピーする\"></td><td>" + (i + 1) + "<br><span class=\"tag " + r.type + "\">" + SHOT_TYPE[r.type] + "</span></td><td class=\"pic\">" + picCell(r, first) + "</td>");
       SHOT_LANGS.forEach(function(L){
         var s = r.cells[L], e = r.ex ? r.ex[L] : "";
-        if (!s){ h.push("<td class=\"shot-cell none\">(画像がありません)" + (e ? "<div class=\"xl\">Excel：" + esc(e) + "</div>" : "") + "</td>"); return; }
+        if (!s){
+          // 画像がないマス：手で入れられる(中国語の簡体字と繁体字が同じ字で、どちらか1つにまとまったときなど)
+          var mv = rowVal(r, L), msame = e && mv && nk(e).toLowerCase() === nk(mv).toLowerCase();
+          var other = L === "zhHans" ? "zhHant" : L === "zhHant" ? "zhHans" : "", ov = other ? rowVal(r, other) : "";
+          var mcls = e && mv ? (msame ? " same" : " diff") : "";
+          h.push("<td class=\"shot-cell none" + mcls + "\"><div>(画像がありません。手で入れられます)</div><input type=\"text\" data-m=\"" + r.anchor + "\" data-ml=\"" + L + "\" value=\"" + esc(mv) + "\" placeholder=\"ここに入力\">" +
+            (ov ? "<div><button type=\"button\" class=\"sub mini\" data-cp=\"" + r.anchor + "\" data-cpl=\"" + L + "\" data-cpf=\"" + other + "\">" + SHOT_LABEL[other] + "と同じにする</button></div>" : "") +
+            (e ? "<div class=\"xl\">" + (msame ? "✓ Excel と同じ" : "Excel：" + esc(e)) + "</div>" : "") + "</td>");
+          return;
+        }
         var v = cellValue(s), same = e && nk(e).toLowerCase() === nk(v).toLowerCase(), cls = e ? (same ? " same" : " diff") : "";
         var info = "";
         if (L === "ja" && s.fix && s.edited === null) info = "<div class=\"xl\">読み取り：" + esc(shotText(s)) + "<br>→ Excel の名前に合わせました</div>";
@@ -2553,7 +2594,7 @@
     shot.rows.forEach(function(r){
       if (shot.off[r.anchor]) return;
       if (shot.onlyNew && shot.ex && r.ex) return;
-      lines.push(SHOT_LANGS.map(function(L){ return clean(cellValue(r.cells[L])); }).join("\t")); n++;
+      lines.push(SHOT_LANGS.map(function(L){ return clean(rowVal(r, L)); }).join("\t")); n++;
     });
     return { text: lines.join("\r\n"), n: n };
   }
@@ -2562,7 +2603,7 @@
   // ----- 読み取りの流れ -----
   function shotRun(){
     if (shot.busy || !shot.list.length) return;
-    shot.busy = true; shotRefresh(); shot.ex = excelFurn();
+    shot.busy = true; shotRefresh(); shot.ex = excelFurn(); shot.order = excelFurnOrder();
     $("shotOut").innerHTML = "";
     var todo = shot.list.filter(function(s){ return !s.scanned; }), i = 0, chain = Promise.resolve();
     shotBar(0);
@@ -2602,7 +2643,7 @@
   $("shotFile").addEventListener("change", function(e){ if (e.target.files.length) shotAdd(e.target.files); });
   $("shotClear").addEventListener("click", function(){
     if (shot.busy) return;
-    shot.list = []; shot.groups = []; shot.rows = []; shot.done = false; shot.off = {};
+    shot.list = []; shot.groups = []; shot.rows = []; shot.done = false; shot.off = {}; shot.man = {};
     $("shotOut").innerHTML = ""; shotMsg("", "選んだ画像を、全部はずしました。"); shotRefresh();
   });
   $("shotRun").addEventListener("click", shotRun);
@@ -2635,7 +2676,11 @@
     else if (t.id === "shotHead") shot.head = t.checked;
   });
   $("shotOut").addEventListener("input", function(e){
-    var t = e.target; if (!t.matches("input[data-s]")) return;
+    var t = e.target;
+    if (t.matches("input[data-m]")){
+      var a = t.getAttribute("data-m"); (shot.man[a] = shot.man[a] || {})[t.getAttribute("data-ml")] = t.value; return;
+    }
+    if (!t.matches("input[data-s]")) return;
     var s = shot.list.filter(function(x){ return x.id === t.getAttribute("data-s"); })[0];
     if (s) s.edited = t.value;
   });
@@ -2648,6 +2693,14 @@
       shotChkCount(); return;
     }
     if (e.target.id === "shotImg"){ shotSaveImages(); return; }
+    if (e.target.matches && e.target.matches("button[data-cp]")){
+      // 「中国語(簡体字)と同じにする」など：となりの言語のマスの文字を、画像がないマスに写す
+      var a = e.target.getAttribute("data-cp"), L = e.target.getAttribute("data-cpl"), F = e.target.getAttribute("data-cpf");
+      var r = shot.rows.filter(function(x){ return x.anchor === a; })[0]; if (!r) return;
+      var v = rowVal(r, F); (shot.man[a] = shot.man[a] || {})[L] = v;
+      var inp = e.target.closest("td").querySelector("input[data-m]"); if (inp) inp.value = v;
+      return;
+    }
     if (e.target.id !== "shotCopy") return;
     var o = shotTSV();
     if (!o.n){ setStatus("stS2", "ng", "コピーする行が、ありません(行の左はしの□に、チェックが付いているか、「新しい家具だけをコピーする」に、チェックが入っていないかを、確かめてください)。"); return; }
