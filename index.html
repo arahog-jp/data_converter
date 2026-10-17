@@ -15,6 +15,7 @@
     --accent:#E8793A; --accent-strong:#C7601F; --accent-soft:#FBDDBF; --danger:#C15B4A; --danger-soft:#F6DDD8;
     --warn-soft:#FBEFC8; --border:#E4DAC3;
     --idx:#4F6FA8; --idx-strong:#3A5484; --idx-soft:#D6E0F1;
+    --shot:#8A5BB0; --shot-strong:#6C4290; --shot-soft:#EADCF5;
     --font-body:"Zen Maru Gothic","Hiragino Maru Gothic ProN","M PLUS Rounded 1c",sans-serif;
     --font-head:"M PLUS Rounded 1c",sans-serif;
   }
@@ -79,12 +80,53 @@
   .method h4{font-family:var(--font-head);font-size:16px;font-weight:800;margin:14px 0 4px;}
   details.alt{margin-top:14px;border-top:1px dashed var(--border);padding-top:8px;}
   pre.code{background:#2E2A22;color:#F8F3E6;border-radius:10px;padding:10px 12px;margin:8px 0;overflow-x:auto;font-size:13px;line-height:1.6;white-space:pre;font-family:Consolas,"BIZ UDGothic","MS Gothic",monospace;}
+  /* 6. ゲーム画面のスクショから、訳を取り出す */
+  .card.shot h2 .no{background:var(--shot);}
+  .card.shot{border-color:var(--shot-soft);}
+  button.shot{background:var(--shot);border-color:var(--shot);}
+  button.shot:hover{background:var(--shot-strong);}
+  button.shot:disabled{background:#C9C2B2;border-color:#C9C2B2;color:#fff;cursor:not-allowed;}
+  .shot-drop{border:2px dashed var(--shot);border-radius:12px;padding:16px;text-align:center;background:#FBF8FE;margin:10px 0;}
+  .shot-drop.on{background:var(--shot-soft);}
+  .shot-bar{height:10px;border-radius:5px;background:var(--surface-alt);overflow:hidden;margin:6px 0;}
+  .shot-bar > div{height:100%;width:0;background:var(--shot);transition:width .2s;}
+  .shot-groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin:10px 0;}
+  .shot-group{border:1px solid var(--border);border-radius:10px;padding:8px 10px;background:#FFFDF8;font-size:14px;}
+  .shot-group select{font-family:var(--font-body);font-size:15px;padding:3px 6px;border-radius:8px;border:1px solid var(--border);margin:4px 0;max-width:100%;}
+  .shot-group img{display:block;max-width:100%;max-height:30px;height:auto;border-radius:4px;border:1px solid var(--border);margin:3px 0 0;}
+  .shot-group.unsure{border-color:#D9B23C;background:var(--warn-soft);}
+  .shot-wrap{overflow-x:auto;margin:8px 0;}
+  table.shot-t{font-size:14px;min-width:900px;}
+  table.shot-t td{vertical-align:top;padding:4px 6px;}
+  table.shot-t th, table.shot-t td:first-child, table.shot-t td:nth-child(2){white-space:nowrap;}
+  table.shot-t td.pic img{width:64px;height:64px;object-fit:contain;border-radius:6px;background:#fff;border:1px solid var(--border);}
+  .shot-cell img{display:block;max-width:180px;max-height:34px;border:1px solid var(--border);border-radius:4px;background:#fff;margin-bottom:3px;}
+  .shot-cell input{font-family:var(--font-body);font-size:14px;width:170px;padding:2px 6px;border:1px solid var(--border);border-radius:6px;}
+  .shot-cell .xl{font-size:12px;color:var(--muted);margin-top:2px;overflow-wrap:anywhere;max-width:180px;}
+  .shot-cell.diff{background:var(--warn-soft);}
+  .shot-cell.same .xl{color:var(--primary-strong);}
+  .shot-cell.none{color:var(--muted);font-size:13px;}
+  .shot-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin:8px 0;}
+  .shot-item{border:1px solid var(--border);border-radius:8px;padding:6px;font-size:13px;background:#fff;}
+  .shot-item img{width:100%;border-radius:4px;display:block;}
+  .shot-item select{display:block;width:100%;font-family:var(--font-body);font-size:13px;margin:2px 0 4px;}
+  .shot-item.ng{border-color:var(--danger);background:var(--danger-soft);}
+  .tag.kit{background:var(--accent);} .tag.furn{background:var(--primary);} .tag.hint{background:var(--idx);}
+  table.shot-t td.chkc{text-align:center;vertical-align:middle;}
+  table.shot-t td.chkc input{width:22px;height:22px;cursor:pointer;}
+  table.shot-t tr.off td{opacity:.45;}
+  table.shot-t tr.off td.chkc{opacity:1;}
+  .shot-cell.low{box-shadow:inset 4px 0 0 #D7261E;}
+  .shot-cell.low.weak{box-shadow:inset 4px 0 0 #E8B400;}
+  .shot-cell .xl.lowt{color:#B0261E;}
+  .shot-cell.low.weak .xl.lowt{color:#9A5A00;}
+  table.shot-t td.pic img.cut{background-color:#fff;background-image:linear-gradient(45deg,#E6E6E6 25%,transparent 25%,transparent 75%,#E6E6E6 75%),linear-gradient(45deg,#E6E6E6 25%,transparent 25%,transparent 75%,#E6E6E6 75%);background-size:10px 10px;background-position:0 0,5px 5px;}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>ツールデータ変換</h1>
-  <p class="lead">Excel(<code>ぽこあマスタデータ.xlsx</code>)から、<code>data.js</code>(ポケモン・家具・施設)、<code>lang.js</code>(翻訳)、<code>index.html</code>(お知らせ・このツールについて・使い方・Q&amp;A・検証の表)を、作り直すページです。足した分・変わった分を、表示して確かめられます。ファイルを選んだだけでは、何も始まりません。「変換する」ボタンを押したときに、はじめて変換します。このページは、あなたのパソコンの中だけで動きます(データは、どこにも送られません。Claude も使いません)。</p>
+  <p class="lead">Excel(<code>ぽこあマスタデータ.xlsx</code>)から、<code>data.js</code>(ポケモン・家具・施設)、<code>lang.js</code>(翻訳)、<code>index.html</code>(お知らせ・このツールについて・使い方・Q&amp;A・検証の表)を、作り直すページです。足した分・変わった分を、表示して確かめられます。ファイルを選んだだけでは、何も始まりません。「変換する」ボタンを押したときに、はじめて変換します。このページは、あなたのパソコンの中だけで動きます(データは、どこにも送られません。Claude も使いません)。いちばん下の「6」では、ゲーム画面のスクショから、家具の訳を取り出せます(「6」だけは、文字を読むためのプログラムとデータを、インターネットから読み込みます。画像は、どこにも送りません)。</p>
 
   <div class="card">
     <h2>はじめに(先にやっておくこと)</h2>
@@ -220,6 +262,40 @@
     </ol>
     <div class="row"><button class="sub" id="reset" type="button">最初からやり直す</button></div>
   </div>
+
+  <div class="card shot" id="cardS">
+    <h2><span class="no">6</span>ゲーム画面のスクショから、家具の訳を取り出す</h2>
+    <p>ゲームの言語を切りかえて撮った、スクリーンショット(画面の写真のことです。以下「スクショ」)から、家具の名前を、文字として読み取って、日本語・英語・韓国語・中国語(簡体字)・中国語(繁体字)の表にします。<b>「1」〜「5」とは別の作業です</b>(この「6」だけを使ってもかまいません)。画像は、このページの中だけで読み取ります(どこにも送りません)。</p>
+    <details><summary>使えるスクショ(撮り方)</summary>
+      <ol>
+        <li><b>家具のスクショ</b>：持ち物の画面で、家具にカーソルを合わせて、名前の吹き出しが出ているときに撮ったもの。</li>
+        <li><b>キットのスクショ</b>：ショップで、キットを選んで、上に名前、左に絵が出ている画面で撮ったもの。名前の最後の「キット」(英語の「Kit」なども)は、取りのぞきます。</li>
+        <li><b>くらしのヒントのスクショ</b>(はつでんマシンなど)：「くらしのヒント」から開ける説明の画面で撮ったもの。説明の文の1行目の、オレンジ色の言葉(例：「風力はつでんマシン」)を、名前として読み取ります。英語では、文の中の言葉なので、「Windmills」のように、複数の形(最後に s が付いた形)で書かれています。このページで、ふつうの英語の文法のきまりにそって、単数の形(例：「Windmill」)に直します。</li>
+        <li>同じ家具を、言語ごとに1枚ずつ撮ります。言語を変えても、持ち物の並びと、カーソルの位置は、できるだけ同じにします(家具の絵のほかに、カーソルの位置も、同じ家具を見つける手がかりにするためです)。</li>
+        <li>画像は、Nintendo Switch(ニンテンドースイッチ)のキャプチャーボタンで撮った、そのままの画像を使います(横1920×縦1080 か、横1280×縦720)。スマートフォンでテレビの画面を撮った写真は、読み取れません。</li>
+        <li>画像の名前や、選ぶ順番は、バラバラでかまいません。このページが、家具の絵と、画面の文字の形から、同じ家具・同じ言語を、自動で組み合わせます。家具・キット・くらしのヒントの画面は、5つの言語の見本を、このページに入れてあるので、言語は、ほぼまちがいなく判定できます。</li>
+      </ol>
+    </details>
+    <h3 style="font-family:var(--font-head);font-size:16px;margin:12px 0 4px;">手順</h3>
+    <ol>
+      <li>(しなくてもかまいません)上の「1」で、<code>ぽこあマスタデータ.xlsx</code> を選んでおきます。選んでおくと、日本語の名前の読み間違いを、Excel の「言語(家具)」シートの名前に合わせて直し、Excel に入っている訳と、ゲームの訳を、見比べられます。</li>
+      <li>下の「画像を選ぶ」ボタンをクリックします。画像が入っているフォルダ(例：<code>C:\Users\Owner\Downloads\求職活動\PP\01_マスタデータ・ツール\ぽこあ最適施設診断ツール\99_雑口\訳資料\キット訳</code>)を開いて、<kbd>Ctrl</kbd> キーを押しながら <kbd>A</kbd> キーを押して(全部選ぶ)、「開く」をクリックします。エクスプローラーから、下の点線の枠の中へ、画像をドラッグして放しても、選べます。別のフォルダの画像も、続けて選ぶと、足されます。</li>
+      <li>「読み取る」ボタンをクリックします。はじめて使うときは、文字を読むためのプログラムとデータ(1つの言語につき、2MB くらい)を、インターネットから読み込むので、時間がかかります(2回目からは、ブラウザに保存したデータを使うので、早くなります)。</li>
+      <li>「言語のまとまり」で、まとまりごとの言語が、正しいかを確かめます。違うときは、▼の一覧から、正しい言語を選びます(選び直すと、その言語で読み直します)。<b>「要確認」と出たまとまり(とくに、中国語の簡体字と繁体字)は、必ず確かめてください。</b></li>
+      <li>「読み取った訳」の表で、文字が、画像(表の中の小さな画像)と同じかを確かめます。違うところは、四角の中をクリックして、直接直します。黄色のマスは、Excel の訳と違うところです(下に、Excel の訳が出ます)。ゲームの文字の画像で、後ろに赤や黄色の色が付いている字は、読み取りに自信がない字です(赤は、とくに自信がない字)。そのマスは、とくに念入りに見比べてください。</li>
+      <li>コピーしたい行だけ、表の左はしの□にチェックを付けます(はじめは、全部の行にチェックが付いています。「全部にチェックを付ける」「全部のチェックを外す」ボタンで、まとめて付けたり外したりできます)。「表をコピーする」ボタンをクリックして、Excel の「言語(家具)」シートの、いちばん下の空いている行の、A列のセルをクリックして、<kbd>Ctrl</kbd> キーを押しながら <kbd>V</kbd> キーを押して、貼り付けます(A列＝日本語、B列＝英語、C列＝韓国語、D列＝中国語(簡体字)、E列＝中国語(繁体字)の順で入ります)。すでにある家具の訳を直すときは、その行のセルを、手で直します。</li>
+      <li>(必要なときだけ)家具の画像がほしいときは、表の下の「家具の画像を、PNG で保存する」ボタンをクリックします。チェックが付いている行の家具の絵を、背景を透明にした PNG 画像で、ダウンロードのフォルダ(<code>C:\Users\Owner\Downloads</code>)に保存します(2枚以上のときは、ZIP ファイルにまとめます。ZIP ファイルを右クリックして、「すべて展開」をクリックすると、画像が取り出せます)。家具は持ち物の画面のアイコン、キットはキットの画面の絵を書き出します(くらしのヒントの行は、書き出しません)。</li>
+    </ol>
+    <div class="shot-drop" id="shotDrop">
+      <div class="row" style="justify-content:center;"><button id="shotPick" class="shot" type="button">画像を選ぶ</button><button id="shotClear" class="sub" type="button" disabled>選んだ画像を、全部はずす</button></div>
+      <div class="muted">ここに、画像(JPG・PNG)をドラッグして放しても、選べます。</div>
+    </div>
+    <input type="file" id="shotFile" accept="image/*,.jpg,.jpeg,.png,.webp" multiple>
+    <div class="row"><button id="shotRun" class="shot" type="button" disabled>読み取る</button></div>
+    <div class="shot-bar hidden" id="shotBarW"><div id="shotBar"></div></div>
+    <div class="status" id="stS">まだ、画像が選ばれていません。</div>
+    <div id="shotOut"></div>
+  </div>
 </div>
 
 <script>
@@ -227,7 +303,8 @@
   "use strict";
   var $ = function(id){ return document.getElementById(id); };
   var ENVS = ["あかるい", "くらい", "すずしい", "あたたかい", "うるおっている", "乾そうしている"];
-  var FENVS = ["照明", "冷房", "暖房", "潤い", "庇"];
+  // 家具の「環境1」「環境2」に書ける言葉。「乾燥」は2026年10月17日に追加(てるてるポワルンの「たいようのすがた」。ツールの画面では「乾そうしている」と出す)
+  var FENVS = ["照明", "冷房", "暖房", "潤い", "乾燥", "庇"];
   var TASTES = ["あまい", "からい", "しぶい", "すっぱい", "にがい"];  // ポケモンの「好きな味」に書ける言葉(空欄もOK)
   var state = { x:null, d:null, l:null, i:null, out:{ d:null, l:null, i:null }, manual:{}, seq:0, done:false };
   var FILES = { d:"data.js", l:"lang.js", i:"index.html" }, STEP = { "data.js":"3", "lang.js":"4", "index.html":"5" };
@@ -1404,13 +1481,17 @@
     });
   }
   function take(files, forced){
-    var jobs = [], other = [], wasDone = state.done;
+    var jobs = [], other = [], imgs = [], wasDone = state.done;
     Array.prototype.forEach.call(files, function(f){
-      if (forced === "x" || (!forced && /\.xls[xm]$/i.test(f.name))) jobs.push(setX(f));
+      if (!forced && isImg(f)) imgs.push(f);
+      else if (forced === "x" || (!forced && /\.xls[xm]$/i.test(f.name))) jobs.push(setX(f));
       else if (forced === "i" || (!forced && /\.html?$/i.test(f.name))) jobs.push(setHtml(f, forced).then(function(r){ if (r === "unknown") other.push(f.name); }));
       else if (forced || /\.js$/i.test(f.name)) jobs.push(setJs(f, forced).then(function(r){ if (r === "unknown") other.push(f.name); }));
       else other.push(f.name);
     });
+    // 画像は、「6」(スクショから訳を取り出す)で使う
+    if (imgs.length){ shotAdd(imgs); $("cardS").scrollIntoView({ behavior: "smooth", block: "start" }); }
+    if (!jobs.length && !other.length) return;
     Promise.all(jobs).then(function(){
       if (other.length) alert("次のファイルは、Excel・data.js・lang.js・index.html のどれでもないので、使いませんでした：\n" + other.join("\n"));
       // ファイルを選んだだけでは、変換しない(「変換する」ボタンを押したときに、はじめて変換する)
@@ -1485,6 +1566,1097 @@
       copyText(text).then(function(ok){ st.textContent = ok ? "コピーしました。上の「貼る場所」に、貼り付けてください。" : "コピーできませんでした。上の黒い枠の中の行を、マウスで選んで、Ctrl + C でコピーしてください。"; });
     });
   });
+
+  // ---------- 6. ゲーム画面のスクショから、訳を取り出す ----------
+  // 文字の読み取りには、Tesseract.js(テッセラクト・ジェイエス。画像の文字を読むプログラム)を使う。はじめて使うときに、インターネットから読み込む。
+  // 画像は、横1920×縦1080 に大きさをそろえてから調べる(下の数字は、すべてこの大きさのときの位置)。
+  var SHOT_LANGS = ["ja", "en", "ko", "zhHans", "zhHant"];
+  var SHOT_LABEL = { ja: "日本語", en: "英語", ko: "韓国語", zhHans: "中国語(簡体字)", zhHant: "中国語(繁体字)" };
+  var SHOT_MODEL = { ja: "jpn", en: "eng", ko: "kor", zhHans: "chi_sim", zhHant: "chi_tra" };
+  var SHOT_TYPE = { kit: "キット", furn: "家具", hint: "ヒント" };
+  var SHOT_KINDS = ["furn", "kit", "hint"];
+  // 同じ家具とみなす、絵のちがいの大きさ(これより小さければ、同じ家具)
+  var SHOT_T = { kit: 10, furn: 14, hint: 25 };
+  // 言語ごとの、画面の決まった文字(ボタンなど)の形の見本(2026年10月15日に、ほぐすさんのスクショから作りました。
+  // 家具：「いつでもサブバッグ」のボタン、ヒント：上の「まちづくり」の見出し、キット：「ざいこ」「計」「もどる・けってい」。
+  // 3つとも、5つの言語の見本があります。見本にない画面(言語)だけ、文字を読み取って判定します)
+  var SHOT_REF = {
+    furn: { ja: "00000000000000000000000000000000000000000000000003004000000000040080003407037777413364000000377840h00h1aeehd6emkf0fmee0ikepb3777k07bd8180b660i77i00e007a0000e03f0a0hlee0770i00008b0b67b087fb6b406e00f010e001ed06b00077084331h0003k00i00i0131i0001l100bh70306d4000hh701kef00dh300af1088008808h100bh30000000000000000000000000000000000000000000000000000", en: "0000000000000000000000000000000000000000000000000800000000006phbd00000e000000k0i0000000b000lk80000a686a8617e07e0k36b4a0e7b6060l0l4d3733ah360l3dd63e7hph6miadb07e0leh3f6ee4kk780rer3eieki6ffe0lfd6ie4bohehoak0d67e1le1ke1hehibo00l0ledl7li0eed0l0mehfh4844eh1l4f14hh488eie48bf4k00d0d8ed4d7e6f40df6fefe000000aa0000000000e000006e0000000000001i0000000i1", ko: "00000000000000000000000000000000000000000000000000db0a07788087771177180006006047b7000476044443b000a3eei068ee0e77710770e000h77h001i000000b177ii6k3004ee0e088ie0aeee70e30e000h77h06d6e10001d1e6hh1e0000600a0deee0a77760ef0e0006aa6000700000h1070bbbb0000keeb086ee0eeee64341e0037bd73eehe800830070ebbb0000000000033000000000030000000000000000000100000000", zhHans: "6m60000000000000000000000000000000000000000006zzz40f30hf6f78a0060877a04777400b0008b7711f7740000pzzf00e0faahee7ael3b77d0677760ee0e4mee18oee4e0000lzzh00f0ebbiied83706ff8001a303be0e3f7i67f77ee0000lzzd10f0hd7ike71770eee66b373be1e048f77h3e77b80000lzz13b70e6eadda08d3fmmf888e0806l000feeeddeeei0000dry7fa0000000000000000000000000000000000000000000000", zhHant: "6m6000000000000000000000000000000000000000000011040f308a4b74a0704aa7d467773008000b77704b7710000000f00e0e8dkee74f77iibda0000004e061f74e0f76070000060h00f0eb7adei8ei7dea7f67d7638e0a4f7fd1a7b070000001d10f0e7afke7afi8eaeeh37746b0e046hebb07ebb4000000013b70f7eafeb048467aaba080b03i000f778d7877h00000007fa0031000000441000000440003700000000000000000000" },
+    hint: { ja: "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000b000000044000180086e30000000000000000000000000000000000000000000000000000000000000000000000000004lltld6hmfe87feei103ih600rd1l0000000000000000000000000000000000000000000000000000000000000000000000000001eere80heee000004e7k10000t00f0000000000000000000000000000000000000000000000000000000000000000000000000000hbr700e407d0000b81fd0000f00i0000000000000000000000000000000000000000000000000000000000000000000000000006d0lbb0677l604khd0008k30006hd0000000000000000000000000000000000000000000000000000000000000000000000000000di40006eb1000000000018003e3000000000000000000000000000000000000000", en: "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003em800000000000ifh000000000b000000000000000003000000000000000000000000000000000000000000000000000000000000l000368363300e0bb00000000e00007600441000140f000000000000000000000000000000000000000000000000000000000000l0kh8hsddhl00e07eliadfbhhe0kh8mbaliekifamkao300000000000000000000000000000000000000000000000000000000000l4e0ihmm77l00e08fmf8iiheie3e0ie0kee7lmedee7e000000000000000000000000000000000000000000000000000000000000l0kfae7o77l00lel1ke4ed8fde0kfarh7ee7lhd7ee7k300000000000000000000000000000000000000000000000000000000000401400000000067001601104330140e0000000700003100000000000000000000000000000", ko: "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003ee6b01dbad00017b4663306b0000000000000000000000000000000000000000000000000000000000000000000000000000000770ee04f77i00004d3d77d7ee0000000000000000000000000000000000000000000000000000000000000000000000000000000770ee88elke6003ed8777d7ee0000000000000000000000000000000000000000000000000000000000000000000000000000000770ee01777b00003daa3770ee00000000000000000000000000000000000000000000000000000000000000000000000000000004a78e04feel0000h10a76hebe00000000000000000000000000000000000000000000000000000000000000000000000000000000000804feee00006eed1000080000000000000000000000000000000000000000", zhHant: "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000484d736164406600864d4d84000000000000000000000000000000000000000000000000000000000000000000000000000000001aeief06bdd4defem8faba7400000000000000000000000000000000000000000000000000000000000000000000000000000000a84f7468788677fbe76eeef7000000000000000000000000000000000000000000000000000000000000000000000000000000007aaie80eheee777eh43be787000000000000000000000000000000000000000000000000000000000000000000000000000000007fehe81hbee88ebbh67beffa0000000000000000000000000000000000000000000000000000000000000000000000000000000073a77674deeb040768d873480000000000000000000000000000000000000000", zhHans: "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008f4f761d0ke00b00d77iaii8000000000000000000000000000000000000000000000000000000000000000000000000000000004a7k7f0348a68khel8f7afeb00000000000000000000000000000000000000000000000000000000000000000000000000000000ab4i788e87880ee88b4fafee00000000000000000000000000000000000000000000000000000000000000000000000000000000aabme80e3aa60f87k4bkd77e000000000000000000000000000000000000000000000000000000000000000000000000000000006i7f760l6fl08defl30i8bd80000000000000000000000000000000000000000000000000000000000000000000000000000000083d77604a43d070a6813a1170000000000000000000000000000000000000000" },
+    kit: { ja: "0000000000000000000000000000000000a08413000000000000000000006eeoih7bd00f803llll80000000003777p73e7001m00000000000000000fkhp80e7000l07h0000000000000bd00480e8000k0l000000000000006m403703mfe080bmb7ed00000000006eeea0046000003777400000000000000000000000000017703600000000006ee37e00000000006ee7ima0000000003ee3di600000000017707e00000000007im77e00000000007oo67e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006dee8000000000000000000000000000007eee600000000000000000000000000000007d0008a000100000000000000000000000aa000b8000000000000000000000000000000h06ab0f008mee800f0806eph0000000000f00i00e00770e0000000eeid3f00e10000000e07ad07604i77404mfb03oeb0000000006808a70d00e3emb3ebeh00e600e003d0000000f070e0a304i77b1k0000e816b000000003b0hef0f00e00f00000h00h000e000h0000000e14aa0f000f16e3i4070bdbh7000000000f16061f00e06h003ef600fa40eea0800000001f603h40001eb003be7008e400000000003h306f10031800000000006b0040000000000008eb0000000000000000000000000000000bea0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", en: "000000000000000000000000000000h000000000000000000d000000000s000000000k00000000l000000000s0hh600if8t46lb0al4l640000000s0m1l03k00l0l0k8m00mm00000000s0l0l00am0l0l0eee00td00000000s0l0l038o0o1m8m3oa7ll3000000060404007404117303734330000000000000000000000eee30000000008000s000004b0000l000s007d1dm0db0l000s06i8lai07f8l000s0e70l6e3ho7l000s08f3k4ib8a8l000b00ae30d1ee68000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007eee7000000000000000000000003feea0000000000000000000000000000000000000a8000a800hh000006000000000004h0006e000bi000000d800000000000000000000000e0b870d00l870000e00000000000e00f10b40e80000003e600000000000000000000006a0ebb0a30ol6fdibef0000000000e01ad01d0f007fhfhemh6hhii100000000000000003d0e0e0d10l3lepe0lb0000000000f0ddk14a0i10i0fe77el77eee700000000000000000e08a60f00oihelideh1000000000d46034d104mibhie78el77eee7000000000000000004f406h10000000000000000000000f801f800000000000000000000000000000000000000aea00000000000000000000000007eb100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", ko: "00000000000000000000000000000000000000d4400000000000000000000000er6l770beeem300000000000000000h0l7700000e000000000000000008i0ok7000b0i00000000000000000hl1l77000e0d00000000000000001h6el77377i7760000000000000000100h7737777760000000000000000000000000000330080000636000bhfb0l0ah6e7e000aff80t608fr7e000eabf0l00f0e7e00007400800f6m7e0000meeel0d60e7e0000meeel0300e7e0000300040000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deed10000000000000000000000000000000000aeef400000000000000000000000000h3001h100477600001100001000030000000000e6000f4006706047606000000000000b40ee01d00a00007ea7737d0717b6e0000000003b03h00d007fbm04i67d000000000000e00ih00d01behd3e0d7b00e0d00b1e000000000d30de10a00dabm08fb1d000000000000e00e4a0e01beef3e0d7704a0800f0e000000000a40ked0d006eek01aaa60000000000006a0bb18800877a07da774e0083d10e0000000000f33063d00b77a07804b0000000000000bd00bd0007777000044000040000600000000008e308e0006eee30aab0000000000000003de4000000000000000000000000000000000001be700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", zhHans: "0000000000000000000000000000000000077f87700860000000000000000000k7f7778epeeee0000000000000000imrlli07beehf0000000000000000ei3d006t007e10000000000000001eeemed4l8eofe000000000000000adllrli0l00e00000000000000000a000b000f08k0000000000000000000000000000000480006300800000aead001i00e0003ikeekh773beme60000000018e00f0000eeeeeh00e00e0000e0000e00la0e0000eeeeeh04d00e0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001feed000000000000000000000000aeef40000000000000000000000000000000000001f1003f004078b177771000000000e6000f401738300060000000000000000000000000d10fd067017h76747737000000003b03h00d00adfm3meeek00000000000000000000000f00kh00a083e1e77dd7700000000d30de10a03fb8de3eme000000000000000000000000f00e840d00b6l877dd7700000000a40ked0d067eehe86kd600000000000000000000000770ea0d307k848787787000000000f33063d00ii8dehdf00000000000000000000000000db01e800437774877730000000008e308e00036086418ed00000000000000000000000004ed30000000000000000000000001be700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", zhHant: "0000000000000000000000000000000000000080000a00000000000000000000meeied6eoeeeb0000000000000000e77l760a6eee60000000000000000ee7l7b4m003e30000000000000000ekemee7e8ekfd0000000000000006adeoe80e00a00000000000000000a377k770e07k000000000000000000000000000003301400330060000b78fhh78h40e0003me7bhb7ee77i7300ba77fb77747i7300hhaeeh67730e00008a64a43i7e0e000778bde8bi7e0e0000000000030003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001feed000000000000000000000000aeef40000000000000000000000000000000000001f1003f0010000000000000000000e6000f400001000030000000000000000000000000d10fd067063f777eeef7000000003b03h00d01baf87fehed00000000000000000000000f00kh00a063h7d70hh7700000000d30de10a01e4ed387a7600000000000000000000000f00e840d00a8f870dd0700000000a40ked0d047edd180de600000000000000000000000770ea0d301e76a700037000000000f33063d00e7dd1f4700000000000000000000000000db01e800867774eeef40000000008e308e00033a8378a7600000000000000000000000004ed30000000000000000000000001be700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" }
+  };
+  var REF_CHARS = "0123456789abcdefghijklmnopqrstuvwxyz", refCache = {};
+  function refVec(t, L){ var k = t + ":" + L; if (!refCache[k]) refCache[k] = SHOT_REF[t][L].split("").map(function(ch){ return REF_CHARS.indexOf(ch) / 35; }); return refCache[k]; }
+  var TESS_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
+  // キットの名前の最後の「キット」(読み取りの、よくある間違い〔キツット・Kif など〕もふくむ)
+  var KIT_RE = /\s*(キ\s*[ッツ]*\s*ト|k\s*i\s*[tf]|키\s*트|套\s*[组組]|[组組]\s*件|套\s*[装裝])$/i;
+  var shot = { off: {}, list: [], seq: 0, groups: [], rows: [], busy: false, workers: {}, libP: null, done: false };
+  var SW = 1920, SH = 1080;
+
+  function shotMsg(cls, html){ setStatus("stS", cls, html); }
+  function shotBar(p){
+    $("shotBarW").classList.toggle("hidden", p === null);
+    if (p !== null) $("shotBar").style.width = Math.round(p * 100) + "%";
+  }
+  function shotRefresh(){
+    $("shotRun").disabled = shot.busy || !shot.list.length;
+    $("shotClear").disabled = shot.busy || !shot.list.length;
+    $("shotPick").disabled = shot.busy;
+  }
+  function isImg(f){ return /^image\//.test(f.type || "") || /\.(jpe?g|png|webp|bmp)$/i.test(f.name || ""); }
+  function shotAdd(files){
+    if (shot.busy) return;
+    var added = 0, skip = [];
+    Array.prototype.forEach.call(files, function(f){
+      if (!isImg(f)){ skip.push(f.name); return; }
+      var key = f.name + "|" + f.size + "|" + f.lastModified;
+      if (shot.list.some(function(s){ return s.key === key; })) return;
+      shot.list.push({ id: "s" + (++shot.seq), key: key, file: f, name: f.name, ocr: {}, force: "", edited: null });
+      added++;
+    });
+    var msg = "画像を、" + fmt(added) + " 枚、足しました(いま、全部で " + fmt(shot.list.length) + " 枚)。";
+    if (skip.length) msg += "<br>次のファイルは、画像ではないので、使いませんでした：" + esc(skip.join("、"));
+    msg += "<br>「読み取る」ボタンをクリックすると、読み取りを始めます。";
+    shotMsg(added ? "" : "ng", msg);
+    if (shot.done){ shot.done = false; $("shotOut").innerHTML = "<p class=\"muted\">画像を足したので、前の結果を消しました。もう一度、「読み取る」ボタンをクリックしてください。</p>"; }
+    shotRefresh();
+  }
+
+  // ----- 画像を調べる -----
+  function shotDecode(file){
+    if (window.createImageBitmap) return createImageBitmap(file);
+    return new Promise(function(res, rej){
+      var u = URL.createObjectURL(file), im = new Image();
+      im.onload = function(){ res(im); }; im.onerror = function(){ rej(new Error("img")); }; im.src = u;
+    });
+  }
+  function near(D, i, r, g, b, tol){ return Math.abs(D[i] - r) <= tol && Math.abs(D[i + 1] - g) <= tol && Math.abs(D[i + 2] - b) <= tol; }
+  function lum(D, i){ return 0.299 * D[i] + 0.587 * D[i + 1] + 0.114 * D[i + 2]; }
+  // 画面の種類：キット(上に青い帯)・家具(持ち物の、うすむらさきの袋)
+  function shotKind(D){
+    var n = 0, b = 0, m = 0, p = 0, x, y, q = 0, qn = 0;
+    // くらしのヒント(左右に、赤いわく)
+    for (y = 300; y < 800; y += 20){ [60, 1850].forEach(function(xx){ qn++; if (near(D, (y * SW + xx) * 4, 230, 84, 92, 30)) q++; }); }
+    if (q / qn > 0.6) return "hint";
+    for (x = 200; x < 1700; x += 10) for (y = 195; y < 246; y += 5){ n++; if (near(D, (y * SW + x) * 4, 29, 149, 244, 40)) b++; }
+    for (x = 220; x < 1700; x += 10) for (y = 130; y < 530; y += 10){ m++; if (near(D, (y * SW + x) * 4, 230, 198, 255, 25)) p++; }
+    return b / n > 0.5 ? "kit" : (p / m > 0.05 ? "furn" : "");
+  }
+  // 範囲の中を、文字(1)と、それ以外(0)に分ける。dark：黒っぽい文字(明るさ < th)。そうでないとき：白っぽい文字(明るさ > th)
+  function binMask(D, x0, y0, w, h, dark, th){
+    var m = new Uint8Array(w * h), gr = new Uint8Array(w * h), x, y, i, L, o;
+    for (y = 0; y < h; y++) for (x = 0; x < w; x++){
+      i = ((y0 + y) * SW + x0 + x) * 4; L = lum(D, i);
+      if (dark === "org"){
+        // オレンジ色の文字(くらしのヒントの、名前の部分)
+        o = D[i] - D[i + 2];
+        m[y * w + x] = (D[i] > 200 && o > 110) ? 1 : 0;
+        gr[y * w + x] = Math.max(0, Math.min(255, Math.round(255 - o * 1.25)));
+        continue;
+      }
+      // 文字は、色の少ない(灰色に近い)点だけ(吹き出しのオレンジのふちや、空の青を、文字とまちがえないため)
+      m[y * w + x] = (Math.max(D[i], D[i + 1], D[i + 2]) - Math.min(D[i], D[i + 1], D[i + 2]) < (dark ? 50 : 60)) && (dark ? L < th : L > th) ? 1 : 0;
+      // 読み取りに使う、白地に黒い文字の濃淡(文字のふちの、なめらかさを残す)
+      gr[y * w + x] = dark ? Math.round(L) : 255 - Math.min(D[i], D[i + 1], D[i + 2]);
+    }
+    return { w: w, h: h, m: m, g: gr, x0: x0, y0: y0 };
+  }
+  // 文字のある列のまとまり(12px 以上あいたら、別のまとまり)
+  function colGroups(B){
+    var out = [], x, y, on, s = -1, last = -99;
+    for (x = 0; x < B.w; x++){
+      on = false; for (y = 0; y < B.h; y++) if (B.m[y * B.w + x]){ on = true; break; }
+      if (!on) continue;
+      if (s < 0 || x - last > 12){ if (s >= 0) out.push([s, last]); s = x; }
+      last = x;
+    }
+    if (s >= 0) out.push([s, last]);
+    return out;
+  }
+  // 文字の行からはなれた、横線など(吹き出しのふちの一部)を消す
+  function dropRows(B){
+    var gs = [], x, y, k, s = -1, last = -99, cur = 0;
+    for (y = 0; y < B.h; y++){
+      k = 0; for (x = 0; x < B.w; x++) k += B.m[y * B.w + x];
+      if (!k) continue;
+      if (s < 0 || y - last > 2){ if (s >= 0) gs.push([s, last, cur]); s = y; cur = 0; }
+      last = y; cur += k;
+    }
+    if (s >= 0) gs.push([s, last, cur]);
+    if (gs.length < 2) return;
+    var mx = Math.max.apply(null, gs.map(function(gp){ return gp[2]; }));
+    gs.forEach(function(gp){ if (gp[2] < mx * 0.2) for (y = gp[0]; y <= gp[1]; y++) for (x = 0; x < B.w; x++) B.m[y * B.w + x] = 0; });
+  }
+  // 小さな点(文字ではないもの)を消す
+  function dropSpecks(B){
+    dropRows(B);
+    // 左はし・右はしの、小さなまとまりだけを消す(文字のあいだの「・」は、消さない)
+    var n, g, c, k, x, y;
+    for (n = 0; n < 6; n++){
+      g = colGroups(B); if (g.length < 2) break;
+      var done = true;
+      [g[0], g[g.length - 1]].forEach(function(c){
+        k = 0; for (y = 0; y < B.h; y++) for (x = c[0]; x <= c[1]; x++) k += B.m[y * B.w + x];
+        if (k < 40){ done = false; for (y = 0; y < B.h; y++) for (x = c[0]; x <= c[1]; x++) B.m[y * B.w + x] = 0; }
+      });
+      if (done) break;
+    }
+    void c;
+  }
+  // キットの名前の左にある、家のマーク(白い四角)を消す
+  function dropIcon(B){
+    dropSpecks(B);
+    var g = colGroups(B); if (g.length < 2) return;
+    var c = g[0], w = c[1] - c[0] + 1, cnt = 0, x, y;
+    for (y = 0; y < B.h; y++) for (x = c[0]; x <= c[1]; x++) cnt += B.m[y * B.w + x];
+    if (w >= 35 && w <= 100 && cnt / (w * B.h) > 0.33) for (y = 0; y < B.h; y++) for (x = c[0]; x <= c[1]; x++) B.m[y * B.w + x] = 0;
+  }
+  // 文字の部分だけを切り出して、白地に黒い文字の canvas(読み取りに使う画像)にする
+  function maskCanvas(B){
+    var x1 = B.w, y1 = B.h, x2 = -1, y2 = -1, x, y;
+    for (y = 0; y < B.h; y++) for (x = 0; x < B.w; x++) if (B.m[y * B.w + x]){ if (x < x1) x1 = x; if (x > x2) x2 = x; if (y < y1) y1 = y; if (y > y2) y2 = y; }
+    if (x2 < 0) return null;
+    var pad = 16, W = x2 - x1 + 1 + pad * 2, H = y2 - y1 + 1 + pad * 2, c = document.createElement("canvas");
+    c.width = W; c.height = H;
+    var ctx = c.getContext("2d"), im = ctx.createImageData(W, H), d = im.data, i, v, a, b, near2;
+    // 文字の点から 2px 以内だけ、元の濃淡を使う(それ以外は、白にする)
+    var lo = 255, hi = 0;
+    for (y = y1; y <= y2; y++) for (x = x1; x <= x2; x++) if (B.m[y * B.w + x]){ v = B.g[y * B.w + x]; if (v < lo) lo = v; }
+    hi = 255; if (hi - lo < 30) lo = hi - 30;
+    for (y = 0; y < H; y++) for (x = 0; x < W; x++){
+      var sx = x - pad + x1, sy = y - pad + y1; v = 255;
+      if (sx >= 0 && sy >= 0 && sx < B.w && sy < B.h){
+        near2 = false;
+        for (a = -2; a <= 2 && !near2; a++) for (b = -2; b <= 2; b++){ var ny = sy + a, nx = sx + b; if (ny >= 0 && nx >= 0 && ny < B.h && nx < B.w && B.m[ny * B.w + nx]){ near2 = true; break; } }
+        if (near2) v = Math.max(0, Math.min(255, Math.round((B.g[sy * B.w + sx] - lo) * 255 / (hi - lo))));
+      }
+      i = (y * W + x) * 4; d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 255;
+    }
+    ctx.putImageData(im, 0, 0);
+    // 文字の高さが 28px より大きいときは、28px くらいに小さくする(読み取りが、いちばん正確になる大きさ)
+    var sc = Math.max(0.5, Math.min(1, 28 / (y2 - y1 + 1))), c2 = document.createElement("canvas");
+    c2.width = Math.max(1, Math.round(W * sc)); c2.height = Math.max(1, Math.round(H * sc));
+    var x2c = c2.getContext("2d"); x2c.imageSmoothingEnabled = true; x2c.imageSmoothingQuality = "high";
+    x2c.fillStyle = "#fff"; x2c.fillRect(0, 0, c2.width, c2.height); x2c.drawImage(c, 0, 0, c2.width, c2.height);
+    c2.box = [B.x0 + x1, B.y0 + y1, x2 - x1 + 1, y2 - y1 + 1]; c2.sc = sc; c2.pad = pad;
+    return c2;
+  }
+  // 範囲の色を、n×n のマスの平均にする(同じ家具を見つける手がかり)
+  function feat(D, x0, y0, w, h, n){
+    var out = [], gx, gy, x, y, i, r, g, b, k;
+    for (gy = 0; gy < n; gy++) for (gx = 0; gx < n; gx++){
+      r = g = b = k = 0;
+      for (y = y0 + Math.floor(gy * h / n); y < y0 + Math.floor((gy + 1) * h / n); y += 2) for (x = x0 + Math.floor(gx * w / n); x < x0 + Math.floor((gx + 1) * w / n); x += 2){
+        if (x < 0 || y < 0 || x >= SW || y >= SH) continue;
+        i = (y * SW + x) * 4; r += D[i]; g += D[i + 1]; b += D[i + 2]; k++;
+      }
+      out.push(k ? r / k : 0, k ? g / k : 0, k ? b / k : 0);
+    }
+    return out;
+  }
+  // 画面の決まった文字(ボタンなど)の形。言語ごとに違うので、同じ言語の画像を、まとめる手がかりにする
+  function chromeFp(D, boxes){
+    var out = [];
+    boxes.forEach(function(bx){
+      var B = binMask(D, bx[0], bx[1], bx[2], bx[3], true, 140), cw = 5, ch = 5, gx, gy, x, y, k;
+      for (gy = 0; gy + ch <= B.h; gy += ch) for (gx = 0; gx + cw <= B.w; gx += cw){
+        k = 0; for (y = gy; y < gy + ch; y++) for (x = gx; x < gx + cw; x++) k += B.m[y * B.w + x];
+        out.push(k / (cw * ch));
+      }
+    });
+    return out;
+  }
+  function dist(a, b){ var s = 0, i, n = Math.min(a.length, b.length); for (i = 0; i < n; i++) s += Math.abs(a[i] - b[i]); return n ? s / n : 999; }
+  function cropURL(cv, box, maxH){
+    var sc = Math.min(1, maxH / box[3]), c = document.createElement("canvas");
+    c.width = Math.max(1, Math.round(box[2] * sc)); c.height = Math.max(1, Math.round(box[3] * sc));
+    c.getContext("2d").drawImage(cv, box[0], box[1], box[2], box[3], 0, 0, c.width, c.height);
+    return c.toDataURL("image/jpeg", 0.85);
+  }
+  function isYel(D, i){ return D[i] > 230 && D[i + 1] > 190 && D[i + 2] < 90; }
+  function isOrg(D, i){ return D[i] > 225 && D[i + 1] > 125 && D[i + 2] < 150; }
+  // 家具の画面：黄色いカーソル(丸)の真ん中を探す
+  function findCursor(D){
+    var X0 = 400, Y0 = 170, X1 = 1520, Y1 = 680, cs = 20, gw = Math.ceil((X1 - X0) / cs), gh = Math.ceil((Y1 - Y0) / cs), cnt = new Uint16Array(gw * gh), x, y, best = -1, bi = 0;
+    for (y = Y0; y < Y1; y += 2) for (x = X0; x < X1; x += 2) if (isYel(D, (y * SW + x) * 4)) cnt[Math.floor((y - Y0) / cs) * gw + Math.floor((x - X0) / cs)]++;
+    for (y = 1; y < gh - 1; y++) for (x = 1; x < gw - 1; x++){
+      var s = 0, a, b;
+      for (a = -1; a <= 1; a++) for (b = -1; b <= 1; b++) s += cnt[(y + a) * gw + x + b];
+      if (s > best){ best = s; bi = y * gw + x; }
+    }
+    if (best < 150) return null;
+    // 丸の、いちばん横に広い行の幅(＝直径)と、丸のいちばん下の行から、真ん中を出す(上にある、吹き出しの矢印に、引っぱられないように)
+    var bx = X0 + (bi % gw) * cs + cs / 2, by = Y0 + Math.floor(bi / gw) * cs + cs / 2, maxW = 0, mx = bx, bottom = -1;
+    for (y = Math.max(0, by - 80); y <= Math.min(SH - 1, by + 80); y++){
+      var l = -1, r = -1, k = 0;
+      for (x = Math.max(0, bx - 75); x <= Math.min(SW - 1, bx + 75); x++) if (isYel(D, (y * SW + x) * 4)){ if (l < 0) l = x; r = x; k++; }
+      if (k >= 3 && y > by - 10) bottom = y;
+      if (k >= 3 && r - l + 1 > maxW){ maxW = r - l + 1; mx = (l + r) / 2; }
+    }
+    if (maxW < 40 || bottom < 0) return null;
+    return { x: Math.round(mx), y: Math.round(bottom - maxW / 2), r: Math.round(maxW / 2) };
+  }
+  // オレンジのふちが、横に長く続いている(60px 以上)行
+  function orgRun(D, y, x0, x1, cx){
+    var best = 0, bs = 0, be = 0, s = -1, x, on;
+    for (x = x0; x <= x1; x++){
+      on = isOrg(D, (y * SW + x) * 4);
+      if (on && s < 0) s = x;
+      if ((!on || x === x1) && s >= 0){ var e = on ? x : x - 1; if (e - s + 1 > best){ best = e - s + 1; bs = s; be = e; } s = -1; }
+    }
+    return (best >= 60 && bs < cx + 160 && be > cx - 160) ? [bs, be] : null;
+  }
+  // カーソルの上の、名前の吹き出し(オレンジのふち)を探す
+  function findBubble(D, c){
+    var x0 = Math.max(0, c.x - 520), x1 = Math.min(SW - 1, c.x + 520), y, r, bot = -1, top = -1, xr = null;
+    // 吹き出しの下のふち：カーソルの丸の、真ん中の高さから上へ探す(丸の横幅より、はみ出しているオレンジの線。矢印が丸に重なる画面もあるため)
+    for (y = c.y - 10; y >= Math.max(0, c.y - c.r - 150); y--){ r = orgRun(D, y, x0, x1, c.x); if (r && (r[0] < c.x - c.r - 6 || r[1] > c.x + c.r + 6)){ bot = y; xr = r; break; } }
+    if (bot < 0) return null;
+    for (y = bot - 30; y >= Math.max(0, bot - 220); y--){
+      r = orgRun(D, y, x0, x1, c.x);
+      if (r){ top = y; xr = r; while (y - 1 >= 0 && orgRun(D, y - 1, x0, x1, c.x)){ y--; top = y; } break; }
+    }
+    if (top < 0) top = bot - 75;
+    // 吹き出しの左右のふちは、高さの真ん中の行で探す(角が丸いため)
+    var my = Math.round((top + bot) / 2), L = -1, R = -1, x;
+    for (x = c.x; x >= x0; x--) if (isOrg(D, (my * SW + x) * 4)){ L = x; break; }
+    for (x = c.x; x <= x1; x++) if (isOrg(D, (my * SW + x) * 4)){ R = x; break; }
+    if (L < 0 || R < 0 || R - L < 40){ L = xr[0] - 10; R = xr[1] + 10; }
+    var bx = L + 8, bw = R - 8 - bx, by = top + 10, bh = bot - 8 - by;
+    return (bw > 10 && bh > 10) ? [bx, by, bw, bh] : null;
+  }
+  // くらしのヒント：説明の文の、1行目のオレンジ色の言葉(＝名前)の場所を探す
+  function isTO(D, i){ return D[i] > 200 && D[i] - D[i + 2] > 110 && D[i + 1] > 80 && D[i + 1] < 210; }
+  function hintName(D){
+    var X0 = 900, X1 = 1800, Y0 = 590, Y1 = 930, x, y, k, y0 = -1, rows = [];
+    for (y = Y0; y < Y1; y++){ k = 0; for (x = X0; x < X1; x++) if (isTO(D, (y * SW + x) * 4)) k++; rows.push(k); if (y0 < 0 && k >= 2) y0 = y; }
+    if (y0 < 0) return null;
+    // 1行目のあたりの、行のまとまり(ふりがなは小さいので、点の数がいちばん多いまとまりを、文字の行とする)
+    var gs = [], s0 = -1, last = -9, cnt = 0;
+    for (y = y0; y < Math.min(Y1, y0 + 90); y++){
+      k = rows[y - Y0];
+      if (k < 2) continue;
+      if (s0 < 0 || y - last > 2){ if (s0 >= 0) gs.push([s0, last, cnt]); s0 = y; cnt = 0; }
+      last = y; cnt += k;
+    }
+    if (s0 >= 0) gs.push([s0, last, cnt]);
+    var band = null;
+    gs.forEach(function(gp){ if (gp[0] < y0 + 50 && (!band || gp[2] > band[2])) band = gp; });
+    if (!band) return null;
+    var t = band[0] - 3, b = band[1] + 3, gap = Math.max(14, Math.round((b - t) * 0.75)), cl = [], cs = -1, ce = -1, cn = 0;
+    // 横に、オレンジの点のまとまりを集める(点が15個より少ないまとまりは、絵のはしなどなので、使わない)
+    for (x = X0; x <= X1; x++){
+      k = 0; if (x < X1) for (y = t; y <= b; y++) if (isTO(D, (y * SW + x) * 4)) k++;
+      if (k){ if (cs < 0 || x - ce > 6){ if (cs >= 0) cl.push([cs, ce, cn]); cs = x; cn = 0; } ce = x; cn += k; }
+    }
+    if (cs >= 0) cl.push([cs, ce, cn]);
+    cl = cl.filter(function(c){ return c[2] >= 15; });
+    if (!cl.length) return null;
+    var xs = cl[0][0], xe = cl[0][1], j;
+    for (j = 1; j < cl.length; j++){ if (cl[j][0] - xe > gap) break; xe = cl[j][1]; }
+    if (xe - xs < 10) return null;
+    return [xs - 3, t, xe - xs + 7, b - t + 1];
+  }
+  // ----- 家具の画像を、背景を透明にして取り出す -----
+  // キットの画面：左の丸の中の絵。背景は、色の少ない明るい灰色(230〜247)なので、四方のはしから、背景の色の点をたどって(塗りつぶしのように)透明にする。
+  // 家のマーク(左下のオレンジの四角)と、はしにかかった模様は、のぞく。
+  var KIT_PIC = [165, 295, 560, 600];    // 調べる範囲(横1920×縦1080のときの、x・y・幅・高さ)
+  var KIT_BADGE = [205, 730, 100, 95];   // 家のマークのあたり
+  function isBg(D, i){ var r = D[i], g = D[i + 1], b = D[i + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b); return mn >= 222 && mx - mn <= 12; }
+  function kitCutout(D){
+    var X = KIT_PIC[0], Y = KIT_PIC[1], W = KIT_PIC[2], H = KIT_PIC[3], n = W * H, bg = new Uint8Array(n), q = new Int32Array(n), qh = 0, qt = 0, x, y, k, i;
+    var push = function(xx, yy){ var kk = yy * W + xx; if (bg[kk]) return; if (!isBg(D, ((Y + yy) * SW + X + xx) * 4)) return; bg[kk] = 1; q[qt++] = kk; };
+    for (x = 0; x < W; x++){ push(x, 0); push(x, H - 1); }
+    for (y = 0; y < H; y++){ push(0, y); push(W - 1, y); }
+    while (qh < qt){ k = q[qh++]; x = k % W; y = (k - x) / W; if (x > 0) push(x - 1, y); if (x < W - 1) push(x + 1, y); if (y > 0) push(x, y - 1); if (y < H - 1) push(x, y + 1); }
+    // 残った点を、つながりごとに分けて、はしにかかるもの・家のマーク・小さなかけらを、のぞく
+    var lab = new Int32Array(n), comps = [], c, minx, miny, maxx, maxy, area, edge;
+    for (k = 0; k < n; k++){
+      if (bg[k] || lab[k]) continue;
+      c = comps.length + 1; qh = 0; qt = 0; q[qt++] = k; lab[k] = c; area = 0; edge = false; minx = W; miny = H; maxx = 0; maxy = 0;
+      while (qh < qt){
+        var kk = q[qh++], xx = kk % W, yy = (kk - xx) / W; area++;
+        if (xx === 0 || yy === 0 || xx === W - 1 || yy === H - 1) edge = true;
+        if (xx < minx) minx = xx; if (xx > maxx) maxx = xx; if (yy < miny) miny = yy; if (yy > maxy) maxy = yy;
+        [kk - 1, kk + 1, kk - W, kk + W].forEach(function(nb, j){
+          if (nb < 0 || nb >= n || (j === 0 && xx === 0) || (j === 1 && xx === W - 1)) return;
+          if (!bg[nb] && !lab[nb]){ lab[nb] = c; q[qt++] = nb; }
+        });
+      }
+      var inBadge = X + minx >= KIT_BADGE[0] && X + maxx <= KIT_BADGE[0] + KIT_BADGE[2] && Y + miny >= KIT_BADGE[1] && Y + maxy <= KIT_BADGE[1] + KIT_BADGE[3];
+      comps.push({ area: area, keep: !edge && !inBadge && area >= 300, box: [minx, miny, maxx, maxy] });
+    }
+    var keepAny = comps.some(function(cc){ return cc.keep; });
+    if (!keepAny) return null;
+    var bx0 = W, by0 = H, bx1 = 0, by1 = 0;
+    comps.forEach(function(cc){ if (!cc.keep) return; bx0 = Math.min(bx0, cc.box[0]); by0 = Math.min(by0, cc.box[1]); bx1 = Math.max(bx1, cc.box[2]); by1 = Math.max(by1, cc.box[3]); });
+    var pad = 4, ox = Math.max(0, bx0 - pad), oy = Math.max(0, by0 - pad), ow = Math.min(W - 1, bx1 + pad) - ox + 1, oh = Math.min(H - 1, by1 + pad) - oy + 1;
+    var cv2 = document.createElement("canvas"); cv2.width = ow; cv2.height = oh;
+    var ctx = cv2.getContext("2d"), im = ctx.createImageData(ow, oh), d = im.data;
+    for (y = 0; y < oh; y++) for (x = 0; x < ow; x++){
+      k = (oy + y) * W + ox + x; i = ((Y + oy + y) * SW + X + ox + x) * 4; var o = (y * ow + x) * 4;
+      var l = lab[k], keep = l && comps[l - 1].keep;
+      d[o] = D[i]; d[o + 1] = D[i + 1]; d[o + 2] = D[i + 2]; d[o + 3] = keep ? 255 : 0;
+      // ふちを、なめらかにする(背景のとなりの点は、背景の色に近いほど、うすくする)
+      if (keep){
+        var nearBg = (x > 0 && bg[k - 1]) || (x < ow - 1 && bg[k + 1]) || bg[k - W] || bg[k + W];
+        if (nearBg){ var dd = Math.abs(D[i] - 242) + Math.abs(D[i + 1] - 242) + Math.abs(D[i + 2] - 242); d[o + 3] = Math.max(80, Math.min(255, Math.round(dd * 4))); }
+      }
+    }
+    ctx.putImageData(im, 0, 0);
+    return cv2;
+  }
+  // 家具(持ち物の画面)：黄色いカーソルの丸の中のアイコン。丸の背景(上が黄色、下が黄緑)と、まわりの灰色を、はしからたどって透明にする。
+  // 右下の個数の数字と、左下の小さなマーク(白い四角)は、取りのぞく(数字が重なっていた部分は、まわりの色でうめるか、欠ける)。
+  var FURN_R = 45;   // カーソルの丸の半径(横1920×縦1080のとき)
+  function px3(D, x, y){ var i = (y * SW + x) * 4; return [D[i], D[i + 1], D[i + 2]]; }
+  function fY(p){ return p[0] > 225 && p[1] > 190 && p[1] < 245 && p[2] < 140 && p[0] - p[2] > 100; }
+  function fG(p){ return p[0] > 185 && p[0] < 235 && p[1] > 215 && p[1] < 245 && p[2] > 130 && p[2] < 185 && p[1] - p[2] > 45; }
+  function fP(p){ return Math.min(p[0], p[1], p[2]) > 222 && Math.max(p[0], p[1], p[2]) - Math.min(p[0], p[1], p[2]) < 16; }
+  function fLoose(p){ var mn = Math.min(p[0], p[1], p[2]), mx = Math.max(p[0], p[1], p[2]); return (p[0] > 215 && p[1] > 175 && p[2] < 175 && p[0] - p[2] > 55) || (p[0] > 180 && p[1] > 205 && p[2] < 205 && p[1] - p[2] > 22) || (mn > 205 && mx - mn < 30); }
+  function fL(p){ return 0.299 * p[0] + 0.587 * p[1] + 0.114 * p[2]; }
+  function furnCutout(D, c0){
+    // 丸の真ん中：丸がいちばん横に広い行
+    var ws = [], y, x, mw = 0;
+    for (y = Math.max(0, c0.y - 40); y < Math.min(SH, c0.y + 90); y++){
+      var L0 = -1, R0 = -1;
+      for (x = c0.x - 52; x <= c0.x + 52; x++){ var p = px3(D, x, y); if (fY(p) || fG(p)){ L0 = x; break; } }
+      if (L0 < 0) continue;
+      for (x = c0.x + 52; x >= c0.x - 52; x--){ var p2 = px3(D, x, y); if (fY(p2) || fG(p2)){ R0 = x; break; } }
+      ws.push([R0 - L0, y, (L0 + R0) / 2]); if (R0 - L0 > mw) mw = R0 - L0;
+    }
+    if (!ws.length) return null;
+    var best = ws.filter(function(w){ return w[0] >= mw - 2; });
+    var cy = Math.round(best.reduce(function(a, w){ return a + w[1]; }, 0) / best.length), cx = Math.round(best.reduce(function(a, w){ return a + w[2]; }, 0) / best.length);
+    var R = FURN_R, S = 2 * R + 1, ox = cx - R, oy = cy - R, n = S * S, k, i;
+    if (ox < 0 || oy < 0 || ox + S > SW || oy + S > SH) return null;
+    var col = new Array(n), bg = new Uint8Array(n), q = new Int32Array(n), qh = 0, qt = 0;
+    for (y = 0; y < S; y++) for (x = 0; x < S; x++) col[y * S + x] = px3(D, ox + x, oy + y);
+    var dist2 = function(kk){ var xx = kk % S - R, yy = Math.floor(kk / S) - R; return Math.sqrt(xx * xx + yy * yy); };
+    for (k = 0; k < n; k++) if (dist2(k) > R - 4){ bg[k] = 1; q[qt++] = k; }
+    var isb = function(kk){ var p = col[kk]; return fY(p) || fG(p) || fP(p); };
+    var nbs = function(kk){ var xx = kk % S, r = []; if (xx > 0) r.push(kk - 1); if (xx < S - 1) r.push(kk + 1); if (kk >= S) r.push(kk - S); if (kk < n - S) r.push(kk + S); return r; };
+    while (qh < qt){ k = q[qh++]; nbs(k).forEach(function(nb){ if (!bg[nb] && isb(nb)){ bg[nb] = 1; q[qt++] = nb; } }); }
+    // ふちに残った、背景に近い色の点も、2回まで透明にする
+    for (var it = 0; it < 2; it++){
+      var add = [];
+      for (k = 0; k < n; k++) if (!bg[k] && fLoose(col[k]) && nbs(k).some(function(nb){ return bg[nb]; })) add.push(k);
+      add.forEach(function(kk){ bg[kk] = 1; });
+    }
+    // 個数の数字(右下)と、マーク(左下)：白(輪郭)と灰色の点が、丸の中にあれば、その四角の中の灰色の点を消す
+    var rm = new Uint8Array(n);
+    [["num", R + 3, R + 8, S, S], ["badge", 0, R + 12, R - 6, S]].forEach(function(b){
+      var white = 0, dark = 0, xx, yy, p;
+      for (yy = b[2]; yy < b[4]; yy++) for (xx = b[1]; xx < b[3]; xx++){
+        k = yy * S + xx; p = col[k]; if (dist2(k) > R - 4) continue;
+        var neu = Math.max(p[0], p[1], p[2]) - Math.min(p[0], p[1], p[2]) < 45, l = fL(p);
+        if (neu && l > 236) white++; if (neu && l < 200) dark++;
+      }
+      if (white < 25 || dark < 15) return;
+      for (yy = b[2]; yy < b[4]; yy++) for (xx = b[1]; xx < b[3]; xx++){
+        k = yy * S + xx; if (bg[k]) continue; p = col[k];
+        var neu2 = Math.max(p[0], p[1], p[2]) - Math.min(p[0], p[1], p[2]) < 45;
+        if (b[0] === "num" && (neu2 || fLoose(p))) rm[k] = 1;
+        if (b[0] === "badge" && neu2 && fL(p) >= 115) rm[k] = 1;
+      }
+    });
+    var alpha = new Uint8Array(n);
+    for (k = 0; k < n; k++) alpha[k] = (bg[k] || rm[k]) ? 0 : 255;
+    // 消した点のうち、まわりの多くが絵の点なら、まわりの色でうめる
+    for (it = 0; it < 6; it++){
+      var ch = false;
+      for (k = 0; k < n; k++){
+        if (!rm[k] || alpha[k]) continue;
+        var kx = k % S, ky = Math.floor(k / S), cnt = 0, sr = 0, sg = 0, sb = 0, a2, b2;
+        for (a2 = -2; a2 <= 2; a2++) for (b2 = -2; b2 <= 2; b2++){
+          var nx = kx + b2, ny = ky + a2; if (nx < 0 || ny < 0 || nx >= S || ny >= S) continue;
+          var kk2 = ny * S + nx; if (alpha[kk2] === 255){ cnt++; sr += col[kk2][0]; sg += col[kk2][1]; sb += col[kk2][2]; }
+        }
+        if (cnt >= 15){ col[k] = [sr / cnt, sg / cnt, sb / cnt]; alpha[k] = 255; ch = true; }
+      }
+      if (!ch) break;
+    }
+    // 小さなかけら(矢印の先など)を消す
+    var lab = new Int32Array(n), sizes = [], mx2 = 0;
+    for (k = 0; k < n; k++){
+      if (!alpha[k] || lab[k]) continue;
+      var id = sizes.length + 1, c = 0; qh = 0; qt = 0; q[qt++] = k; lab[k] = id;
+      while (qh < qt){ var kk3 = q[qh++]; c++; nbs(kk3).forEach(function(nb){ if (alpha[nb] && !lab[nb]){ lab[nb] = id; q[qt++] = nb; } }); }
+      sizes.push(c); if (c > mx2) mx2 = c;
+    }
+    for (k = 0; k < n; k++) if (alpha[k] && sizes[lab[k] - 1] < Math.max(15, Math.min(60, mx2 * 0.1))) alpha[k] = 0;
+    // ふち(透明のとなり)の点は、丸の背景の色がまざっているので、内側の点の色に置きかえて、少しすかす
+    var edge = [];
+    for (k = 0; k < n; k++) if (alpha[k] && nbs(k).some(function(nb){ return !alpha[nb]; }) ) edge.push(k);
+    var isEdge = new Uint8Array(n); edge.forEach(function(kk){ isEdge[kk] = 1; });
+    edge.forEach(function(kk){
+      var kx = kk % S, ky = Math.floor(kk / S), cnt = 0, sr = 0, sg = 0, sb = 0, a2, b2;
+      for (a2 = -2; a2 <= 2; a2++) for (b2 = -2; b2 <= 2; b2++){
+        var nx = kx + b2, ny = ky + a2; if (nx < 0 || ny < 0 || nx >= S || ny >= S) continue;
+        var k4 = ny * S + nx; if (alpha[k4] && !isEdge[k4]){ cnt++; sr += col[k4][0]; sg += col[k4][1]; sb += col[k4][2]; }
+      }
+      if (cnt) col[kk] = [sr / cnt, sg / cnt, sb / cnt];
+      alpha[kk] = 200;
+    });
+    // 絵のある範囲だけを切り出す
+    var x0 = S, y0 = S, x1 = -1, y1 = -1;
+    for (k = 0; k < n; k++) if (alpha[k]){ var px_ = k % S, py_ = Math.floor(k / S); if (px_ < x0) x0 = px_; if (px_ > x1) x1 = px_; if (py_ < y0) y0 = py_; if (py_ > y1) y1 = py_; }
+    if (x1 < 0) return null;
+    x0 = Math.max(0, x0 - 2); y0 = Math.max(0, y0 - 2); x1 = Math.min(S - 1, x1 + 2); y1 = Math.min(S - 1, y1 + 2);
+    var w = x1 - x0 + 1, h = y1 - y0 + 1, cv2 = document.createElement("canvas"); cv2.width = w; cv2.height = h;
+    var ctx = cv2.getContext("2d"), im = ctx.createImageData(w, h), d = im.data;
+    for (y = 0; y < h; y++) for (x = 0; x < w; x++){ k = (y0 + y) * S + x0 + x; i = (y * w + x) * 4; d[i] = col[k][0]; d[i + 1] = col[k][1]; d[i + 2] = col[k][2]; d[i + 3] = alpha[k]; }
+    ctx.putImageData(im, 0, 0);
+    return cv2;
+  }
+  // その行の家具の画像(背景が透明)。キットは、キットの画面の絵。家具(持ち物の画面)は、取り出し方を検討中なので、まだ null。
+  function rowImage(r){
+    if (r.type === "kit"){
+      var c = null; SHOT_LANGS.forEach(function(L){ if (!c && r.cells[L] && r.cells[L].cut) c = r.cells[L].cut; });
+      if (!c) r.dups.forEach(function(d){ if (!c && d.cut) c = d.cut; });
+      return c;
+    }
+    if (r.type === "furn"){
+      var f = null; SHOT_LANGS.forEach(function(L){ if (!f && r.cells[L] && r.cells[L].cut) f = r.cells[L].cut; });
+      if (!f) r.dups.forEach(function(d){ if (!f && d.cut) f = d.cut; });
+      return f;
+    }
+    return null;
+  }
+  function safeName(t){ return String(t || "").replace(/[\\/:*?"<>|\r\n\t]+/g, "_").replace(/^[\s.]+|[\s.]+$/g, "") || "名前なし"; }
+  // ZIP ファイル(いくつかのファイルを、1つにまとめたファイル)を作る(圧縮はしない)
+  var CRC_T = null;
+  function crc32(u){
+    if (!CRC_T){ CRC_T = new Uint32Array(256); for (var a = 0; a < 256; a++){ var c = a; for (var b = 0; b < 8; b++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; CRC_T[a] = c >>> 0; } }
+    var crc = 0xFFFFFFFF; for (var j = 0; j < u.length; j++) crc = CRC_T[(crc ^ u[j]) & 255] ^ (crc >>> 8); return (crc ^ 0xFFFFFFFF) >>> 0;
+  }
+  function makeZip(files){
+    var enc = new TextEncoder(), parts = [], cen = [], off = 0;
+    var le = function(v, n){ var a = []; for (var j = 0; j < n; j++){ a.push(v & 255); v = v >>> 8; } return a; };
+    var dt = new Date(), dosT = (dt.getHours() << 11) | (dt.getMinutes() << 5) | (dt.getSeconds() >> 1), dosD = ((dt.getFullYear() - 1980) << 9) | ((dt.getMonth() + 1) << 5) | dt.getDate();
+    files.forEach(function(f){
+      var nm = enc.encode(f.name), crc = crc32(f.data), sz = f.data.length;
+      var head = [].concat([0x50, 0x4B, 0x03, 0x04], le(20, 2), le(0x0800, 2), le(0, 2), le(dosT, 2), le(dosD, 2), le(crc, 4), le(sz, 4), le(sz, 4), le(nm.length, 2), le(0, 2));
+      parts.push(new Uint8Array(head), nm, f.data);
+      cen.push(new Uint8Array([].concat([0x50, 0x4B, 0x01, 0x02], le(20, 2), le(20, 2), le(0x0800, 2), le(0, 2), le(dosT, 2), le(dosD, 2), le(crc, 4), le(sz, 4), le(sz, 4), le(nm.length, 2), le(0, 2), le(0, 2), le(0, 2), le(0, 2), le(0, 4), le(off, 4))), nm);
+      off += head.length + nm.length + sz;
+    });
+    var cenSize = cen.reduce(function(a, u){ return a + u.length; }, 0);
+    var end = new Uint8Array([].concat([0x50, 0x4B, 0x05, 0x06], le(0, 2), le(0, 2), le(files.length, 2), le(files.length, 2), le(cenSize, 4), le(off, 4), le(0, 2)));
+    return new Blob(parts.concat(cen, [end]), { type: "application/zip" });
+  }
+  function canvasPng(c){
+    return new Promise(function(res){ c.toBlob(function(b){ b.arrayBuffer().then(function(ab){ res(new Uint8Array(ab)); }); }, "image/png"); });
+  }
+  function shotSaveImages(){
+    var st = "stS3", rows = shot.rows.filter(function(r){ return !shot.off[r.anchor]; }), files = [], used = {}, noImg = { furn: 0, hint: 0, kit: 0 }, jobs = [];
+    rows.forEach(function(r){
+      var c = rowImage(r);
+      if (!c){ noImg[r.type]++; return; }
+      var nm = ""; ["ja", "en", "ko", "zhHans", "zhHant"].forEach(function(L){ if (!nm && r.cells[L]) nm = cellValue(r.cells[L]); });
+      nm = safeName(nm); var base = nm, k = 2; while (used[nm]){ nm = base + "(" + k + ")"; k++; } used[nm] = true;
+      jobs.push(canvasPng(c).then(function(u){ files.push({ name: nm + ".png", data: u }); }));
+    });
+    var notes = [];
+    if (noImg.furn) notes.push("家具の行のうち " + noImg.furn + " 件は、アイコンを取り出せませんでした");
+    if (noImg.hint) notes.push("くらしのヒントの行(" + noImg.hint + " 件)は、家具の絵がない画面なので、書き出しません");
+    if (noImg.kit) notes.push("キットの行のうち " + noImg.kit + " 件は、絵を取り出せませんでした");
+    if (!jobs.length){ setStatus(st, "ng", "書き出せる画像が、ありません(行の左はしの□に、チェックが付いているかを、確かめてください)。" + (notes.length ? "<br>" + esc(notes.join("。")) + "。" : "")); return; }
+    Promise.all(jobs).then(function(){
+      var blob, fname;
+      if (files.length === 1){ blob = new Blob([files[0].data], { type: "image/png" }); fname = files[0].name; }
+      else {
+        var d = new Date(), ymd = d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2);
+        blob = makeZip(files); fname = "家具画像_" + ymd + ".zip";
+      }
+      var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = fname; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 3000);
+      setStatus(st, "ok", "<b>" + esc(fname) + "</b> を、ダウンロードのフォルダ(<code>C:\\Users\\Owner\\Downloads</code>)に、保存しました(画像 " + files.length + " 枚)。" + (notes.length ? "<br>" + esc(notes.join("。")) + "。" : ""));
+    });
+  }
+  function shotScan(s){
+    return shotDecode(s.file).then(function(img){
+      var w = img.width, h = img.height;
+      s.size = w + "×" + h;
+      if (Math.abs(w / h - 16 / 9) > 0.03) throw new Error("ratio");
+      var cv = document.createElement("canvas"); cv.width = SW; cv.height = SH;
+      var ctx = cv.getContext("2d"); ctx.drawImage(img, 0, 0, SW, SH);
+      if (img.close) img.close();
+      var D = ctx.getImageData(0, 0, SW, SH).data, kind = shotKind(D), B, cvs, c, bb;
+      var th = document.createElement("canvas"); th.width = 320; th.height = 180; th.getContext("2d").drawImage(cv, 0, 0, 320, 180);
+      s.thumb = th.toDataURL("image/jpeg", 0.7);
+      s.type = kind;
+      if (!kind) throw new Error("kind");
+      if (kind === "hint"){
+        var nb = hintName(D); if (!nb) throw new Error("hint");
+        B = binMask(D, nb[0], nb[1], nb[2], nb[3], "org"); dropSpecks(B);
+        cvs = maskCanvas(B); if (!cvs) throw new Error("hint");
+        s.feat = feat(D, 940, 165, 805, 405, 8);
+        s.pic = cropURL(cv, [940, 165, 805, 405], 96);
+        s.fp = chromeFp(D, [[700, 92, 520, 36]]);
+        s.pos = "";
+      } else if (kind === "kit"){
+        B = binMask(D, 160, 185, 1260, 65, false, 215); dropIcon(B);
+        cvs = maskCanvas(B); if (!cvs) throw new Error("name");
+        s.feat = feat(D, 200, 330, 490, 520, 16);
+        s.pic = cropURL(cv, [200, 330, 490, 520], 128);
+        s.cut = kitCutout(D);   // 背景を透明にした、キットの絵(PNG に書き出すときに使う)
+        s.fp = chromeFp(D, [[965, 598, 145, 44], [1290, 780, 80, 50], [1555, 1015, 355, 50]]);
+        s.pos = "";
+      } else {
+        c = findCursor(D); if (!c) throw new Error("cursor");
+        bb = findBubble(D, c); if (!bb) throw new Error("bubble");
+        B = binMask(D, bb[0], bb[1], bb[2], bb[3], true, 180); dropSpecks(B);
+        cvs = maskCanvas(B); if (!cvs) throw new Error("name");
+        s.feat = feat(D, c.x - 36, c.y - 36, 72, 72, 12);
+        s.pic = cropURL(cv, [c.x - 48, c.y - 48, 96, 96], 96);
+        try { s.cut = furnCutout(D, c); } catch (e2){ s.cut = null; }   // 背景を透明にした、家具のアイコン
+        s.fp = chromeFp(D, [[1385, 685, 245, 37]]);
+        // カーソルの位置(列・段・ページの点)
+        var dot = -1, x, i;
+        for (x = 880; x < 1060; x += 2){ i = (520 * SW + x) * 4; if (D[i] > 230 && D[i + 1] > 130 && D[i + 1] < 210 && D[i + 2] < 130){ dot = x; break; } }
+        s.pos = c.y > 540 ? "tray:" + Math.round((c.x - 483) / 105.3) : Math.round((c.x - 483) / 105.3) + ":" + Math.round((c.y - 240) / 104) + ":" + (dot < 0 ? "" : Math.round((dot - 880) / 16));
+      }
+      s.bin = cvs;
+      s.crop = cropURL(cv, [cvs.box[0] - 4, cvs.box[1] - 4, cvs.box[2] + 8, cvs.box[3] + 8], 40);
+      // 自信がない字に、四角を描くための、名前の部分の画像(元の大きさ)
+      var cb = [cvs.box[0] - 4, cvs.box[1] - 4, cvs.box[2] + 8, cvs.box[3] + 8], cc = document.createElement("canvas");
+      cc.width = cb[2]; cc.height = cb[3]; cc.getContext("2d").drawImage(cv, cb[0], cb[1], cb[2], cb[3], 0, 0, cb[2], cb[3]);
+      s.cropCv = cc; s.cropBox = cb; s.marks = {};
+      s.ok = true; s.err = "";
+    }).catch(function(e){
+      s.ok = false;
+      s.err = { ratio: "画像の形が、ゲーム画面(横16：縦9)と違います(" + (s.size || "") + ")。", kind: "家具の画面(持ち物)・キットの画面(ショップ)・くらしのヒントの画面の、どれか、わかりませんでした。", hint: "説明の文の中に、オレンジ色の名前が、見つかりませんでした。", cursor: "黄色いカーソルが、見つかりませんでした。", bubble: "名前の吹き出しが、見つかりませんでした。", name: "名前の文字が、見つかりませんでした。" }[e && e.message] || "画像を、開けませんでした。";
+    });
+  }
+
+  // ----- 文字を読み取る -----
+  function tessLib(){
+    if (window.Tesseract) return Promise.resolve(window.Tesseract);
+    if (shot.libP) return shot.libP;
+    shot.libP = new Promise(function(res, rej){
+      var sc = document.createElement("script"); sc.src = TESS_URL;
+      sc.onload = function(){ if (window.Tesseract) res(window.Tesseract); else rej(new Error("lib")); };
+      sc.onerror = function(){ rej(new Error("lib")); };
+      document.head.appendChild(sc);
+    });
+    shot.libP.catch(function(){ shot.libP = null; });
+    return shot.libP;
+  }
+  var shotNote = "";
+  function tessWorker(model){
+    if (shot.workers[model]) return shot.workers[model];
+    var label = ""; Object.keys(SHOT_MODEL).forEach(function(k){ if (SHOT_MODEL[k] === model && !label) label = SHOT_LABEL[k].replace(/\(.*\)/, "") + (k === "zhHans" ? "(簡体字)" : k === "zhHant" ? "(繁体字)" : ""); });
+    shotNote = label + "の文字のデータを、読み込んでいます(はじめてのときは、少し時間がかかります)…";
+    shotMsg("", esc(shotNote));
+    var p = tessLib().then(function(T){
+      return T.createWorker(model, 1, { langPath: "https://cdn.jsdelivr.net/npm/@tesseract.js-data/" + model + "@1.0.0/4.0.0_best_int", logger: function(m){
+        if (m && m.status && /loading|initializ/i.test(m.status) && typeof m.progress === "number") shotMsg("", esc(shotNote) + " " + Math.round(m.progress * 100) + "%");
+      } });
+    }).then(function(w){ return w.setParameters({ tessedit_pageseg_mode: "7" }).then(function(){ return w; }); });
+    shot.workers[model] = p;
+    p.catch(function(){ delete shot.workers[model]; });
+    return p;
+  }
+  function ocr(s, model){
+    if (s.ocr[model]) return Promise.resolve(s.ocr[model]);
+    return tessWorker(model).then(function(w){ return w.recognize(s.bin, {}, { text: true, blocks: true }); }).then(function(r){
+      var d = (r && r.data) || {}, o = { text: String(d.text || "").trim(), conf: d.confidence || 0, syms: [] };
+      (d.blocks || []).forEach(function(b){ (b.paragraphs || []).forEach(function(p){ (p.lines || []).forEach(function(l){ (l.words || []).forEach(function(w){ (w.symbols || []).forEach(function(y){
+        if (y && y.bbox) o.syms.push({ t: y.text, x0: y.bbox.x0, x1: y.bbox.x1, y0: y.bbox.y0, y1: y.bbox.y1, h: y.bbox.y1 - y.bbox.y0, c: typeof y.confidence === "number" ? y.confidence : 100 });
+      }); }); }); }); });
+      s.ocr[model] = o; return o;
+    });
+  }
+  function cnt(t, re){ var m = t.match(re); return m ? m.length : 0; }
+  // 読み取った文字が、その言語らしいかの点数
+  function langScore(lang, o){
+    var t = o.text.replace(/\s/g, ""), n = t.length;
+    if (!n) return 0;
+    var kana = cnt(t, /[぀-ヿ]/g), hang = cnt(t, /[가-힯ᄀ-ᇿ㄰-㆏]/g), lat = cnt(t, /[A-Za-z]/g), han = cnt(t, /[一-鿿]/g), f = 1;
+    if (lang === "ja") f = kana / n >= 0.3 ? 1 : 0.4;
+    else if (lang === "ko") f = hang / n >= 0.6 ? 1 : 0.3;
+    else if (lang === "en") f = lat / n >= 0.7 ? 1 : 0.3;
+    else f = (han / n >= 0.7 && !kana && !hang) ? 1 : 0.3;
+    return o.conf * f;
+  }
+  // 英語の複数形を、単数形にする(最後の1語だけ。ふつうの英語の文法のきまりにそって直す)
+  var EN_IRREG = { men: "man", women: "woman", children: "child", people: "person", feet: "foot", teeth: "tooth", mice: "mouse", geese: "goose",
+    leaves: "leaf", knives: "knife", lives: "life", wives: "wife", wolves: "wolf", shelves: "shelf", halves: "half", calves: "calf", loaves: "loaf", thieves: "thief", scarves: "scarf",
+    shoes: "shoe", toes: "toe", canoes: "canoe", oboes: "oboe", potatoes: "potato", tomatoes: "tomato", heroes: "hero", echoes: "echo", volcanoes: "volcano", mosquitoes: "mosquito",
+    cacti: "cactus", fungi: "fungus", indices: "index", matrices: "matrix", vertices: "vertex", dice: "die", oxen: "ox" };
+  var EN_SAME = /^(series|species|news|sheep|deer|fish|moose|swiss|chess|glass|grass|gas|bus|plus|bonus|cactus|lotus|status|virus|walrus|octopus|campus|chorus|iris|basis|axis|crisis|lens|canvas|atlas|bias|corps|its|this|his|as|is|was|us|yes|less|moss|boss|dress|press|cross|class|mass|pass|bass)$/i;
+  function singularEn(t){
+    var m = String(t).match(/^(.*?)([A-Za-z]+)([^A-Za-z]*)$/); if (!m) return t;
+    var w = m[2], lw = w.toLowerCase(), out = null;
+    var keepCase = function(sg){ if (w === w.toUpperCase() && w.length > 1) return sg.toUpperCase(); if (w.charAt(0) === w.charAt(0).toUpperCase()) return sg.charAt(0).toUpperCase() + sg.slice(1); return sg; };
+    if (EN_IRREG[lw]) out = keepCase(EN_IRREG[lw]);
+    else if (lw.length <= 3 || EN_SAME.test(lw) || !/s$/.test(lw) || /(ss|us|is)$/.test(lw)) return t;
+    else if (/[^aeiou]ies$/.test(lw)) out = w.slice(0, -3) + "y";                       // batteries → battery
+    else if (/(ches|shes|sses|xes|zzes)$/.test(lw)) out = w.slice(0, -2);              // benches → bench、boxes → box
+    else out = w.slice(0, -1);                                                         // windmills → windmill、furnaces → furnace
+    return m[1] + out + m[3];
+  }
+  function cleanText(t, lang, type){
+    t = String(t || "").replace(/[\r\n]+/g, " ").trim();
+    t = t.replace(/^[^\p{L}\p{N}]+/u, "").replace(/[^\p{L}\p{N}!！?？)）]+$/u, "");
+    if (lang === "en" || lang === "ko") t = t.replace(/\s+/g, " ");
+    else t = t.replace(/\s+/g, "");
+    if (lang === "ja") t = t.replace(/([ァ-ヺー])[一－—―‐\-](?=[ァ-ヺ]|$)/g, "$1ー");
+    // 中国語のかっこは、Excel と同じ全角の「（」「）」にそろえる(読み取りで《 〈 “ などになることがあるため)
+    if (lang === "zhHans" || lang === "zhHant") t = t.replace(/[《〈“"「『]+\(?|\(/g, "（").replace(/[》〉”」』]+\)?|\)/g, "）").replace(/（+/g, "（").replace(/）+/g, "）");
+    // 韓国語の「:」のあとは、空白を1つ(読み取りで「;」になることがあるため)
+    if (lang === "ko") t = t.replace(/\s*[;:：]\s*/g, ": ");
+    if (type === "kit") t = t.replace(KIT_RE, "");
+    // くらしのヒントの英語は、文の中の言葉なので、複数形(Windmills など)を、単数形(Windmill)にする
+    if (type === "hint" && lang === "en") t = singularEn(t);
+    return t.trim();
+  }
+  function lev(a, b){
+    a = Array.from(a); b = Array.from(b);
+    var m = a.length, n = b.length, d = [], i, j;
+    if (!m || !n) return Math.max(m, n);
+    for (j = 0; j <= n; j++) d[j] = j;
+    for (i = 1; i <= m; i++){
+      var prev = d[0]; d[0] = i;
+      for (j = 1; j <= n; j++){ var tmp = d[j]; d[j] = Math.min(d[j] + 1, d[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1)); prev = tmp; }
+    }
+    return d[n];
+  }
+  function simil(a, b){ a = nk(a || "").toLowerCase().replace(/\s/g, ""); b = nk(b || "").toLowerCase().replace(/\s/g, ""); var n = Math.max(Array.from(a).length, Array.from(b).length); return n ? 1 - lev(a, b) / n : 0; }
+  // Excel の「言語(家具)」シート(手順1で選んだとき)
+  function excelFurn(){
+    if (!state.x || !state.x.book) return null;
+    var rows = state.x.book.sheets[nk("言語(家具)")]; if (!rows) return null;
+    var t = table(rows, "日本語"); if (!t) return null;
+    var out = [];
+    t.recs.forEach(function(r){
+      var ja = S(g(r, "日本語")); if (!ja) return;
+      out.push({ ja: ja, en: S(g(r, "英語")), ko: S(g(r, "韓国語")), zhHans: S(g(r, "中国語(簡体字)")), zhHant: S(g(r, "中国語(繁体字)")) });
+    });
+    return out;
+  }
+
+  // ----- 同じ言語の画像を、まとめる -----
+  function makeGroups(){
+    var gs = [];
+    shot.list.forEach(function(s){
+      if (!s.ok) return;
+      var best = null, bd = 0.008;
+      gs.forEach(function(gr){ if (gr.type !== s.type) return; var d = dist(gr.fp, s.fp); if (d < bd){ bd = d; best = gr; } });
+      if (!best){ best = { id: "g" + (gs.length + 1), type: s.type, fp: s.fp, members: [], lang: "", auto: "", unsure: false }; gs.push(best); }
+      best.members.push(s); s.group = best;
+    });
+    // 前に選んだ言語を、引きつぐ(同じ画像が入っているまとまり)
+    gs.forEach(function(gr){
+      var old = shot.groups.filter(function(o){ return o.members.some(function(m){ return gr.members.indexOf(m) >= 0; }); })[0];
+      if (old){ gr.lang = old.lang; gr.auto = old.auto; gr.unsure = old.unsure; gr.manual = old.manual; }
+    });
+    shot.groups = gs;
+  }
+  function detectLang(gr){
+    // まず、言語ごとの見本と、画面のボタンの文字の形を比べる
+    var R = SHOT_REF[gr.type], ds = [];
+    if (R) Object.keys(R).forEach(function(L){ var v = refVec(gr.type, L); if (v.length === gr.fp.length) ds.push([dist(v, gr.fp), L]); });
+    ds.sort(function(a, b){ return a[0] - b[0]; });
+    if (ds.length && ds[0][0] < 0.012 && (ds.length < 2 || ds[1][0] - ds[0][0] >= 0.008)){
+      gr.lang = gr.auto = ds[0][1]; gr.unsure = false; gr.zh = false; gr.byRef = true;
+      return Promise.resolve();
+    }
+    var sample = gr.members.slice(0, 3), cands = ["ja", "ko", "en", "zhHans"], score = { ja: 0, ko: 0, en: 0, zhHans: 0 };
+    var chain = Promise.resolve();
+    sample.forEach(function(s){
+      cands.forEach(function(L){
+        chain = chain.then(function(){ return ocr(s, SHOT_MODEL[L]); }).then(function(o){ score[L] += langScore(L, o); });
+      });
+    });
+    return chain.then(function(){
+      var best = "ja", bv = -1;
+      cands.forEach(function(L){ if (score[L] > bv){ bv = score[L]; best = L; } });
+      gr.auto = best; gr.unsure = bv / sample.length < 50;
+      gr.zh = best === "zhHans";
+      gr.lang = best;
+    });
+  }
+  // 簡体字か繁体字か：Excel の訳に近いほうにする。わからないときは、簡体字のままにして、「要確認」にする
+  function nearRow(s){
+    var best = null, bd = SHOT_T[s.type];
+    shot.rows.forEach(function(r){ if (r.type !== s.type || !r.ex) return; var d = dist(r.feat, s.feat); if (d < bd){ bd = d; best = r; } });
+    return best;
+  }
+  function decideZh(){
+    var zhs = shot.groups.filter(function(gr){ return gr.zh && !gr.manual; });
+    zhs.forEach(function(gr){
+      var sS = 0, sT = 0, n = 0;
+      gr.members.forEach(function(s){
+        var r = nearRow(s), a = s.ocr.chi_sim, b = s.ocr.chi_tra;
+        if (!r || !a || !b) return;
+        sS += simil(cleanText(a.text, "zhHans", s.type), r.ex.zhHans); sT += simil(cleanText(b.text, "zhHant", s.type), r.ex.zhHant); n++;
+      });
+      if (n && Math.abs(sS - sT) / n >= 0.05){ gr.lang = sS >= sT ? "zhHans" : "zhHant"; gr.unsure = false; gr.zhBy = "Excel"; }
+      else { gr.lang = "zhHans"; gr.unsure = true; gr.zhBy = ""; }
+    });
+    // 同じ種類の画面で、どちらとも決まらないまとまりが2つあるときは、片方を繁体字にする(要確認のまま)
+    SHOT_KINDS.forEach(function(t){
+      var u = zhs.filter(function(gr){ return gr.type === t; });
+      if (u.length === 2 && u[0].unsure && u[1].unsure) u[1].lang = "zhHant";
+      else if (u.length === 2 && u[0].lang === u[1].lang){ u[0].unsure = u[1].unsure = true; }
+    });
+  }
+  function needModels(gr){ return gr.zh ? ["chi_sim", "chi_tra"] : [SHOT_MODEL[gr.lang]]; }
+  function ocrGroup(gr, prog){
+    var chain = Promise.resolve();
+    gr.members.forEach(function(s){
+      needModels(gr).forEach(function(m){
+        chain = chain.then(function(){ return ocr(s, m); }).then(function(){ if (prog) prog(); });
+      });
+    });
+    return chain;
+  }
+  // 韓国語：読み取りの空白は、まちがいが多いので、字と字のすき間の広さで、空白を入れ直す
+  function koSpaces(o){
+    var y = o.syms; if (!y || y.length < 2) return o.text;
+    // 字の真ん中どうしの間かくが、ふだんの1.18倍より広いところに、空白を入れる(韓国語の字は、ほぼ同じ幅のため)。
+    // 「:」などの記号は、幅がちがうので、間かくの計算には使わない
+    var isL = function(t){ return /[\p{L}\p{N}]/u.test(t || ""); }, L = y.filter(function(a){ return isL(a.t); }), d = [], i;
+    for (i = 1; i < L.length; i++) d.push((L[i].x0 + L[i].x1) / 2 - (L[i - 1].x0 + L[i - 1].x1) / 2);
+    if (!d.length) return o.text;
+    // ふだんの間かく：とても狭いもの(字のわくの読みまちがい)を除いた、小さいほうから4分の1の値
+    var med = d.slice().sort(function(a, b){ return a - b; })[Math.floor(d.length / 2)] || 1;
+    var ds = d.filter(function(v){ return v > med * 0.5; }).sort(function(a, b){ return a - b; }), pm = ds[Math.floor(ds.length / 4)] || med;
+    var out = "", k = -1;
+    y.forEach(function(a){
+      if (!isL(a.t)){ out += a.t; return; }
+      if (k >= 0 && d[k] > pm * 1.18) out += " ";
+      out += a.t; k++;
+    });
+    return out;
+  }
+  function shotLang(s){ return s.langForce || s.group.lang; }
+  function shotText(s){
+    var L = shotLang(s), o = s.ocr[SHOT_MODEL[L]];
+    return o ? cleanText(L === "ko" ? koSpaces(o) : o.text, L, s.type) : "";
+  }
+
+  // ----- 同じ家具を、組み合わせる -----
+  function matchRows(){
+    var rows = [], ex = shot.ex;
+    SHOT_KINDS.forEach(function(type){
+      var T = SHOT_T[type];
+      // まとまりを、言語ごとに分ける(1枚ずつ、言語を選び直した画像があるため)
+      var gs = [];
+      shot.groups.forEach(function(gr){
+        if (gr.type !== type) return;
+        var by = {};
+        gr.members.forEach(function(s){ var L = shotLang(s); if (!by[L]){ by[L] = { lang: L, members: [] }; gs.push(by[L]); } by[L].members.push(s); });
+      });
+      gs.sort(function(a, b){ return (a.lang === "ja" ? 0 : 1) - (b.lang === "ja" ? 0 : 1) || b.members.length - a.members.length; });
+      var mine = [];
+      gs.forEach(function(gr){
+        var L = gr.lang, ms = gr.members.filter(function(s){ return !s.force; }), pairs = [];
+        ms.forEach(function(s){
+          mine.forEach(function(r){
+            if (r.cells[L]) return;
+            var d = dist(r.feat, s.feat) + (type === "furn" && r.pos !== s.pos ? 4 : 0);
+            if (d < T) pairs.push([d, s, r]);
+          });
+        });
+        pairs.sort(function(a, b){ return a[0] - b[0]; });
+        var used = {};
+        pairs.forEach(function(p){
+          if (used[p[1].id] || p[2].cells[L]) return;
+          p[2].cells[L] = p[1]; used[p[1].id] = true;
+        });
+        ms.forEach(function(s){
+          if (used[s.id]) return;
+          // 同じ言語で、同じ家具の画像が2枚あるとき
+          var dup = null;
+          mine.forEach(function(r){ var c = r.cells[L]; if (!dup && c && dist(r.feat, s.feat) < T / 2 && shotText(c) === shotText(s)) dup = r; });
+          if (dup){ dup.dups.push(s); return; }
+          var r = { type: type, cells: {}, dups: [], feat: s.feat, pos: s.pos, anchor: s.id };
+          r.cells[L] = s; mine.push(r);
+        });
+      });
+      rows = rows.concat(mine);
+    });
+    // 手で、行を選んだ画像
+    shot.list.forEach(function(s){
+      if (!s.ok || !s.force) return;
+      var L = shotLang(s), r = null;
+      if (s.force !== "new") rows.forEach(function(x){ if (x.anchor === s.force && x.type === s.type) r = x; });
+      if (!r){ r = { type: s.type, cells: {}, dups: [], feat: s.feat, pos: s.pos, anchor: s.id }; rows.push(r); }
+      var old = r.cells[L];
+      r.cells[L] = s;
+      if (old && old !== s){ var n = { type: old.type, cells: {}, dups: [], feat: old.feat, pos: old.pos, anchor: old.id }; n.cells[L] = old; rows.push(n); }
+    });
+    rows.forEach(function(r){
+      SHOT_LANGS.forEach(function(L){ if (r.cells[L]) r.cells[L].row = r; });
+      r.dups.forEach(function(s){ s.row = r; });
+    });
+    // 日本語の名前を、Excel の名前に合わせる
+    rows.forEach(function(r){
+      var c = r.cells.ja; r.ex = null;
+      if (!c) return;
+      var raw = shotText(c); c.fix = "";
+      if (ex && ex.length){
+        var best = null, bv = 0, second = 0;
+        ex.forEach(function(e){ var v = simil(raw, e.ja); if (v > bv){ second = bv; bv = v; best = e; } else if (v > second) second = v; });
+        if (best && (bv === 1 || (bv >= 0.6 && bv - second >= 0.1))){ r.ex = best; if (best.ja !== raw) c.fix = best.ja; }
+      }
+    });
+    rows = mergeRows(rows);
+    rows.sort(function(a, b){ return SHOT_KINDS.indexOf(a.type) - SHOT_KINDS.indexOf(b.type); });
+    shot.rows = rows;
+  }
+  // 同じ名前の行(同じ家具を、ちがう場所で撮ったときなど)を、1つにまとめる
+  function normV(v){ return nk(v || "").toLowerCase().replace(/[\s・:：()（）\-]/g, ""); }
+  function mergeRows(rows){
+    var out = [];
+    rows.forEach(function(r){
+      var forced = SHOT_LANGS.some(function(L){ return r.cells[L] && r.cells[L].force; }), t = null;
+      if (!forced) out.forEach(function(o){
+        if (t || o.type !== r.type) return;
+        var share = false, conflict = false, jaSame = false;
+        SHOT_LANGS.forEach(function(L){
+          var a = o.cells[L], b = r.cells[L]; if (!a || !b) return;
+          var va = normV(cellValue(a)), vb = normV(cellValue(b));
+          if (va && va === vb){ share = true; if (L === "ja") jaSame = true; } else conflict = true;
+        });
+        if (jaSame || (share && !conflict)) t = o;
+      });
+      if (!t){ out.push(r); return; }
+      SHOT_LANGS.forEach(function(L){ var b = r.cells[L]; if (!b) return; b.row = t; if (!t.cells[L]) t.cells[L] = b; else t.dups.push(b); });
+      r.dups.forEach(function(d){ d.row = t; t.dups.push(d); });
+      if (!t.ex && r.ex) t.ex = r.ex;
+    });
+    return out;
+  }
+  // 読み取りに自信がない字(字ごとの自信の点数が LOW_WEAK より低い字)を探して、ゲームの文字の画像に、蛍光ペンのように色を付ける。
+  // 点数が LOW_STRONG より低い字は赤(ピンク)、それ以外は黄色。
+  var LOW_WEAK = 95, LOW_STRONG = 85;
+  function lowInfo(s){
+    var L = shotLang(s), m = SHOT_MODEL[L], o = s.ocr[m];
+    if (!o || !o.syms || !s.cropCv) return null;
+    if (L === "ja" && s.fix && s.edited === null) return null;   // Excel の名前に合わせたときは、出さない
+    var ys = o.syms.filter(function(y){ return /[\p{L}\p{N}]/u.test(y.t || ""); });
+    if (s.type === "kit"){
+      // 取りのぞいた「キット」などの字は、数えない
+      var extra = ys.length - Array.from(shotText(s).replace(/\s/g, "")).length;
+      if (extra > 0) ys = ys.slice(0, ys.length - extra);
+    }
+    var low = ys.filter(function(y){ return y.c < LOW_WEAK; });
+    if (!low.length) return null;
+    if (!s.marks[m]){
+      var c = document.createElement("canvas"), sc = s.bin.sc || 1, pad = s.bin.pad || 16, bx = s.bin.box, cb = s.cropBox;
+      c.width = s.cropCv.width; c.height = s.cropCv.height;
+      var ctx = c.getContext("2d"); ctx.drawImage(s.cropCv, 0, 0);
+      // 蛍光ペンのように、字の後ろに、うすく色を付ける(「乗算」で重ねるので、字の形は、そのまま見える)
+      ctx.globalCompositeOperation = "multiply";
+      low.forEach(function(y){
+        var x0 = bx[0] + y.x0 / sc - pad - cb[0], x1 = bx[0] + y.x1 / sc - pad - cb[0], y0 = bx[1] + y.y0 / sc - pad - cb[1], y1 = bx[1] + y.y1 / sc - pad - cb[1];
+        ctx.fillStyle = y.c < LOW_STRONG ? "#FFA8A8" : "#FFE27A";
+        var fx = Math.max(0, x0 - 2), fy = Math.max(0, y0 - 3);
+        ctx.fillRect(fx, fy, Math.min(c.width, x1 + 2) - fx, Math.min(c.height, y1 + 3) - fy);
+      });
+      s.marks[m] = { url: c.toDataURL("image/jpeg", 0.9), n: low.length, strong: low.some(function(y){ return y.c < LOW_STRONG; }) };
+    }
+    return s.marks[m];
+  }
+  function cellValue(s){
+    if (!s) return "";
+    if (s.edited !== null) return s.edited;
+    return s.fix || shotText(s);
+  }
+
+  // ----- 表示 -----
+  function shotRender(){
+    var ok = shot.list.filter(function(s){ return s.ok; }), ng = shot.list.filter(function(s){ return !s.ok; });
+    var nk2 = ok.filter(function(s){ return s.type === "kit"; }).length, h = [];
+    if (!shot.ex) h.push("<div class=\"box info\">手順1で、Excel(<code>ぽこあマスタデータ.xlsx</code>)を選んでおくと、日本語の名前の読み間違いを直し、Excel に入っている訳と、見比べられます(選んだあとで、もう一度「読み取る」ボタンをクリックします)。</div>");
+    if (ng.length) h.push("<div class=\"box warn\"><h3>読み取れなかった画像(" + ng.length + " 枚)</h3><ul>" + ng.map(function(s){ return "<li>" + esc(s.name) + "：" + esc(s.err) + "</li>"; }).join("") + "</ul></div>");
+    // 言語のまとまり
+    h.push("<h3 style=\"font-family:var(--font-head);font-size:17px;margin:14px 0 4px;\">言語のまとまり</h3>");
+    h.push("<p class=\"muted\">画面の文字の形が同じ画像を、1つのまとまりにしています。言語が違うときは、▼の一覧から、正しい言語を選びます。</p><div class=\"shot-groups\">");
+    shot.groups.forEach(function(gr){
+      var sel = "<select data-g=\"" + gr.id + "\">" + SHOT_LANGS.map(function(L){ return "<option value=\"" + L + "\"" + (gr.lang === L ? " selected" : "") + ">" + SHOT_LABEL[L] + "</option>"; }).join("") + "</select>";
+      var note = gr.manual ? "(手で選んだ言語)" : gr.unsure ? "<b>要確認</b>(自動の判定に、自信がありません)" : gr.zhBy === "Excel" ? "(Excel の訳と比べて、判定しました)" : gr.byRef ? "(画面のボタンの文字の形で、判定しました)" : "(文字を読み取って、判定しました)";
+      h.push("<div class=\"shot-group" + (gr.unsure && !gr.manual ? " unsure" : "") + "\"><div><span class=\"tag " + gr.type + "\">" + SHOT_TYPE[gr.type] + "</span>" + gr.members.length + " 枚</div>" + sel + "<div class=\"muted\">" + note + "</div><div>" +
+        gr.members.slice(0, 4).map(function(s){ return "<img src=\"" + s.crop + "\" alt=\"\">"; }).join("") + "</div></div>");
+    });
+    h.push("</div>");
+    // 表
+    h.push("<h3 style=\"font-family:var(--font-head);font-size:17px;margin:14px 0 4px;\">読み取った訳(" + shot.rows.length + " 件)</h3>");
+    h.push("<p class=\"muted\">四角の中の文字は、クリックして直せます。小さな画像は、ゲームの画面の文字です。見比べて、違うところを直してください。黄色のマスは、Excel の訳と違うところです。ゲームの文字の画像で、字の後ろに<span style=\"background:#FFA8A8\">赤</span>や<span style=\"background:#FFE27A\">黄色</span>の色が付いているときは、その字の読み取りに、自信がありません(赤は、とくに自信がない字)。そのマスは、とくに念入りに見比べてください。左はしの□にチェックが付いている行だけを、コピーします。</p>");
+    h.push("<div class=\"row\"><button id=\"shotAllOn\" class=\"sub\" type=\"button\">全部にチェックを付ける</button><button id=\"shotAllOff\" class=\"sub\" type=\"button\">全部のチェックを外す</button><span class=\"muted\" id=\"shotChkN\"></span></div>");
+    h.push("<div class=\"shot-wrap\"><table class=\"shot-t\"><tr><th>コピー</th><th>行</th><th>絵</th>" + SHOT_LANGS.map(function(L){ return "<th>" + SHOT_LABEL[L] + "</th>"; }).join("") + "</tr>");
+    var lowN = 0;
+    shot.rows.forEach(function(r, i){
+      var first = null; SHOT_LANGS.forEach(function(L){ if (!first && r.cells[L]) first = r.cells[L]; });
+      var on = !shot.off[r.anchor];
+      h.push("<tr class=\"shot-row" + (on ? "" : " off") + "\"><td class=\"chkc\"><input type=\"checkbox\" data-r=\"" + r.anchor + "\"" + (on ? " checked" : "") + " aria-label=\"" + (i + 1) + " 行目をコピーする\"></td><td>" + (i + 1) + "<br><span class=\"tag " + r.type + "\">" + SHOT_TYPE[r.type] + "</span></td><td class=\"pic\">" + picCell(r, first) + "</td>");
+      SHOT_LANGS.forEach(function(L){
+        var s = r.cells[L], e = r.ex ? r.ex[L] : "";
+        if (!s){ h.push("<td class=\"shot-cell none\">(画像がありません)" + (e ? "<div class=\"xl\">Excel：" + esc(e) + "</div>" : "") + "</td>"); return; }
+        var v = cellValue(s), same = e && nk(e).toLowerCase() === nk(v).toLowerCase(), cls = e ? (same ? " same" : " diff") : "";
+        var info = "";
+        if (L === "ja" && s.fix && s.edited === null) info = "<div class=\"xl\">読み取り：" + esc(shotText(s)) + "<br>→ Excel の名前に合わせました</div>";
+        else if (e) info = "<div class=\"xl\">" + (same ? "✓ Excel と同じ" : "Excel：" + esc(e)) + "</div>";
+        if (r.dups.some(function(d){ return shotLang(d) === L; })) info += "<div class=\"xl\">(同じ画像が、ほかにもあります)</div>";
+        var li = lowInfo(s);
+        if (li){ cls += li.strong ? " low" : " low weak"; info += "<div class=\"xl lowt\">色が付いた字は、読み取りに自信がありません(" + li.n + " 字)</div>"; lowN++; }
+        h.push("<td class=\"shot-cell" + cls + "\"><img src=\"" + (li ? li.url : s.crop) + "\" alt=\"\" title=\"" + esc(s.name) + "\"><input type=\"text\" data-s=\"" + s.id + "\" value=\"" + esc(v) + "\">" + info + "</td>");
+      });
+      h.push("</tr>");
+    });
+    h.push("</table></div>");
+    h.push("<p class=\"muted\" id=\"shotLowN\">" + (lowN ? "読み取りに自信がない字があるマス：" + lowN + " か所(左はしに、赤や黄色の線があるマスです)。" : "読み取りに自信がない字は、ありませんでした。") + "</p>");
+    h.push("<label class=\"chk\"><input type=\"checkbox\" id=\"shotOnlyNew\"" + (shot.onlyNew ? " checked" : "") + (shot.ex ? "" : " disabled") + "><span>Excel の「言語(家具)」シートに、もう名前がある家具の行は、コピーしない(新しい家具だけをコピーする)" + (shot.ex ? "" : "<span class=\"muted\">(手順1で、Excel を選んだときに使えます)</span>") + "</span></label>");
+    h.push("<label class=\"chk\"><input type=\"checkbox\" id=\"shotHead\"" + (shot.head ? " checked" : "") + "><span>1行目に、見出し(日本語・英語・韓国語・中国語(簡体字)・中国語(繁体字))を付ける</span></label>");
+    h.push("<div class=\"row\"><button id=\"shotCopy\" class=\"shot\" type=\"button\">表をコピーする</button></div><div class=\"status\" id=\"stS2\">ボタンをクリックすると、表を、Excel に貼り付けられる形(タブ区切り。セルごとに、タブという見えない文字で区切った形のことです)で、コピーします。</div>");
+    h.push("<h3 style=\"font-family:var(--font-head);font-size:17px;margin:16px 0 4px;\">家具の画像を、PNG で書き出す</h3><p class=\"muted\">チェックが付いている行の、家具の絵を、背景を透明にした PNG 画像(ピーエヌジー。背景を透明にできる画像の形式のことです)で保存します。ファイルの名前は、表の日本語の名前です(例：「とけいだい.png」)。2枚以上のときは、1つの ZIP ファイル(ジップ。いくつかのファイルを1つにまとめたファイルのことです)にまとめて保存します。家具は、持ち物の画面の、カーソルの丸の中のアイコン(横・縦90 くらい)、キットは、キットの画面の絵を書き出します。家具のアイコンは、右下の個数の数字と、左下の小さなマークを取りのぞきます(数字が重なっていたところは、少し欠けることがあります)。</p>");
+    h.push("<div class=\"row\"><button id=\"shotImg\" class=\"shot\" type=\"button\">家具の画像を、PNG で保存する</button></div><div class=\"status\" id=\"stS3\">保存したあと、ZIP ファイルを右クリックして、「すべて展開」をクリックすると、PNG 画像が取り出せます。</div>");
+    // 1枚ずつの一覧
+    h.push("<details><summary>読み取った画像の一覧(1枚ずつ。組み合わせや言語が違うときは、ここで直します)</summary><p class=\"muted\">同じ家具なのに、違う行に入っている画像があるときは、その画像の「行」の▼の一覧から、正しい行を選びます。1枚だけ言語が違うときは、その画像の「言語」の▼の一覧から、正しい言語を選びます(選ぶと、その言語で読み直します)。</p><div class=\"shot-list\">");
+    shot.list.forEach(function(s){
+      if (!s.ok){ h.push("<div class=\"shot-item ng\">" + (s.thumb ? "<img src=\"" + s.thumb + "\" alt=\"\">" : "") + "<div>" + esc(s.name) + "</div><div>" + esc(s.err) + "</div></div>"); return; }
+      var opts = "<option value=\"\"" + (s.force ? "" : " selected") + ">自動(" + (shot.rows.indexOf(s.row) + 1) + " 行目)</option>";
+      shot.rows.forEach(function(r, i){
+        if (r.type !== s.type) return;
+        var lbl = cellValue(r.cells.ja) || cellValue(r.cells.en) || ""; SHOT_LANGS.forEach(function(L){ if (!lbl && r.cells[L]) lbl = cellValue(r.cells[L]); });
+        opts += "<option value=\"" + r.anchor + "\"" + (s.force === r.anchor ? " selected" : "") + ">" + (i + 1) + " 行目：" + esc(lbl) + "</option>";
+      });
+      opts += "<option value=\"new\"" + (s.force === "new" ? " selected" : "") + ">新しい行にする</option>";
+      h.push("<div class=\"shot-item\"><img src=\"" + s.thumb + "\" alt=\"\"><div style=\"overflow-wrap:anywhere;\">" + esc(s.name) + "</div><div><span class=\"tag " + s.type + "\">" + SHOT_TYPE[s.type] + "</span></div><div>言語：<select data-l=\"" + s.id + "\"><option value=\"\"" + (s.langForce ? "" : " selected") + ">まとまりと同じ(" + SHOT_LABEL[s.group.lang] + ")</option>" + SHOT_LANGS.map(function(L){ return "<option value=\"" + L + "\"" + (s.langForce === L ? " selected" : "") + ">" + SHOT_LABEL[L] + "</option>"; }).join("") + "</select></div><div>行：<select data-f=\"" + s.id + "\">" + opts + "</select></div></div>");
+    });
+    h.push("</div></details>");
+    $("shotOut").innerHTML = h.join("");
+    shotChkCount();
+    var msg = "読み取りました：家具 " + (ok.length - nk2) + " 枚・キット " + nk2 + " 枚 → " + shot.rows.length + " 件" + (ng.length ? "(読み取れなかった画像：" + ng.length + " 枚)" : "") + "。下の表を、確かめてください。";
+    shotMsg(ng.length ? "" : "ok", esc(msg));
+  }
+  // チェックが付いている行の数を、表の上に出す
+  function shotChkCount(){
+    var e = $("shotChkN"); if (!e) return;
+    var n = shot.rows.filter(function(r){ return !shot.off[r.anchor]; }).length;
+    e.textContent = "チェックが付いている行：" + n + " / " + shot.rows.length + " 件";
+  }
+  // 「絵」の列：キットは、背景を透明にした絵を、白と灰色の市松模様(透明のしるし)の上に出す
+  function picCell(r, first){
+    var c = rowImage(r);
+    if (c){ if (!c.url) c.url = c.toDataURL("image/png"); return "<img class=\"cut\" src=\"" + c.url + "\" alt=\"\" title=\"背景を透明にした絵(この絵を、PNG で書き出します)\">"; }
+    return "<img src=\"" + (first ? first.pic : "") + "\" alt=\"\">";
+  }
+  function shotTSV(){
+    var lines = [], clean = function(v){ return String(v || "").replace(/[\t\r\n]+/g, " ").trim(); };
+    if (shot.head) lines.push(["日本語", "英語", "韓国語", "中国語(簡体字)", "中国語(繁体字)"].join("\t"));
+    var n = 0;
+    shot.rows.forEach(function(r){
+      if (shot.off[r.anchor]) return;
+      if (shot.onlyNew && shot.ex && r.ex) return;
+      lines.push(SHOT_LANGS.map(function(L){ return clean(cellValue(r.cells[L])); }).join("\t")); n++;
+    });
+    return { text: lines.join("\r\n"), n: n };
+  }
+  function shotRebuild(){ matchRows(); decideZh(); matchRows(); shotRender(); }
+
+  // ----- 読み取りの流れ -----
+  function shotRun(){
+    if (shot.busy || !shot.list.length) return;
+    shot.busy = true; shotRefresh(); shot.ex = excelFurn();
+    $("shotOut").innerHTML = "";
+    var todo = shot.list.filter(function(s){ return !s.scanned; }), i = 0, chain = Promise.resolve();
+    shotBar(0);
+    todo.forEach(function(s){
+      chain = chain.then(function(){ shotMsg("", "画像を調べています… " + (++i) + " / " + todo.length + " 枚"); shotBar(i / todo.length * 0.2); return shotScan(s); }).then(function(){ s.scanned = true; });
+    });
+    chain.then(function(){
+      makeGroups();
+      var gs = shot.groups, k = 0, total = 0;
+      gs.forEach(function(gr){ total += Math.min(3, gr.members.length) * 4 + gr.members.length * 2; });
+      var prog = function(){ k++; shotBar(0.2 + 0.8 * Math.min(1, k / Math.max(1, total))); };
+      var c2 = Promise.resolve();
+      gs.forEach(function(gr){
+        c2 = c2.then(function(){ if (gr.lang) return; shotMsg("", "言語を調べています…"); return detectLang(gr).then(function(){ k += Math.min(3, gr.members.length) * 4; prog(); }); })
+          .then(function(){ shotNote = "文字を読み取っています(" + SHOT_LABEL[gr.lang] + "・" + gr.members.length + " 枚)…"; shotMsg("", esc(shotNote)); return ocrGroup(gr, prog); });
+      });
+      return c2;
+    }).then(function(){
+      shot.done = true; shotBar(null); shotRebuild();
+    }).catch(function(e){
+      shotBar(null);
+      shotMsg("ng", (e && e.message === "lib") ? "文字を読み取るプログラム(Tesseract.js)を、インターネットから読み込めませんでした。インターネットにつながっているかを確かめて、もう一度「読み取る」ボタンをクリックしてください。" : "読み取りの途中で、問題が起きました：" + esc(e && e.message || e) + "。もう一度「読み取る」ボタンをクリックしてください。");
+    }).then(function(){ shot.busy = false; shotRefresh(); });
+  }
+  function regroupLang(gid, L){
+    var gr = shot.groups.filter(function(x){ return x.id === gid; })[0]; if (!gr || shot.busy) return;
+    gr.lang = L; gr.manual = true; gr.unsure = false; gr.zh = false;
+    gr.members.forEach(function(s){ s.edited = null; });
+    shot.busy = true; shotRefresh(); shotBar(0);
+    var k = 0;
+    ocrGroup(gr, function(){ k++; shotBar(k / gr.members.length); }).then(function(){ shotBar(null); shotRebuild(); }).catch(function(e){
+      shotBar(null); shotMsg("ng", (e && e.message === "lib") ? "文字を読み取るプログラムを、読み込めませんでした。インターネットにつながっているかを確かめてください。" : "読み取りの途中で、問題が起きました：" + esc(e && e.message || e));
+    }).then(function(){ shot.busy = false; shotRefresh(); });
+  }
+
+  $("shotPick").addEventListener("click", function(){ $("shotFile").value = ""; $("shotFile").click(); });
+  $("shotFile").addEventListener("change", function(e){ if (e.target.files.length) shotAdd(e.target.files); });
+  $("shotClear").addEventListener("click", function(){
+    if (shot.busy) return;
+    shot.list = []; shot.groups = []; shot.rows = []; shot.done = false; shot.off = {};
+    $("shotOut").innerHTML = ""; shotMsg("", "選んだ画像を、全部はずしました。"); shotRefresh();
+  });
+  $("shotRun").addEventListener("click", shotRun);
+  (function(){
+    var z = $("shotDrop");
+    z.addEventListener("dragover", function(e){ e.preventDefault(); e.stopPropagation(); z.classList.add("on"); });
+    z.addEventListener("dragleave", function(){ z.classList.remove("on"); });
+    z.addEventListener("drop", function(e){
+      e.preventDefault(); e.stopPropagation(); z.classList.remove("on");
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) shotAdd(e.dataTransfer.files);
+    });
+  })();
+  $("shotOut").addEventListener("change", function(e){
+    var t = e.target;
+    if (t.matches("select[data-g]")) regroupLang(t.getAttribute("data-g"), t.value);
+    else if (t.matches("select[data-f]")){
+      var s = shot.list.filter(function(x){ return x.id === t.getAttribute("data-f"); })[0];
+      if (s){ s.force = t.value; shotRebuild(); }
+    } else if (t.matches("select[data-l]")){
+      var s2 = shot.list.filter(function(x){ return x.id === t.getAttribute("data-l"); })[0];
+      if (!s2 || shot.busy) return;
+      s2.langForce = t.value; s2.edited = null;
+      shot.busy = true; shotRefresh(); shotMsg("", "読み直しています…");
+      ocr(s2, SHOT_MODEL[shotLang(s2)]).then(function(){ shotRebuild(); }).catch(function(){ shotMsg("ng", "文字を読み取るプログラムを、読み込めませんでした。インターネットにつながっているかを確かめてください。"); }).then(function(){ shot.busy = false; shotRefresh(); });
+    } else if (t.matches("input[data-r]")){
+      if (t.checked) delete shot.off[t.getAttribute("data-r")]; else shot.off[t.getAttribute("data-r")] = true;
+      var tr = t.closest("tr"); if (tr) tr.classList.toggle("off", !t.checked);
+      shotChkCount();
+    } else if (t.id === "shotOnlyNew") shot.onlyNew = t.checked;
+    else if (t.id === "shotHead") shot.head = t.checked;
+  });
+  $("shotOut").addEventListener("input", function(e){
+    var t = e.target; if (!t.matches("input[data-s]")) return;
+    var s = shot.list.filter(function(x){ return x.id === t.getAttribute("data-s"); })[0];
+    if (s) s.edited = t.value;
+  });
+  $("shotOut").addEventListener("click", function(e){
+    if (!e.target) return;
+    if (e.target.id === "shotAllOn" || e.target.id === "shotAllOff"){
+      var all = e.target.id === "shotAllOn";
+      shot.rows.forEach(function(r){ if (all) delete shot.off[r.anchor]; else shot.off[r.anchor] = true; });
+      Array.prototype.forEach.call($("shotOut").querySelectorAll("input[data-r]"), function(c){ c.checked = all; var tr = c.closest("tr"); if (tr) tr.classList.toggle("off", !all); });
+      shotChkCount(); return;
+    }
+    if (e.target.id === "shotImg"){ shotSaveImages(); return; }
+    if (e.target.id !== "shotCopy") return;
+    var o = shotTSV();
+    if (!o.n){ setStatus("stS2", "ng", "コピーする行が、ありません(行の左はしの□に、チェックが付いているか、「新しい家具だけをコピーする」に、チェックが入っていないかを、確かめてください)。"); return; }
+    copyText(o.text).then(function(ok){
+      setStatus("stS2", ok ? "ok" : "ng", ok ? fmt(o.n) + " 行を、コピーしました。Excel の「言語(家具)」シートの、いちばん下の空いている行の、A列のセルをクリックして、<kbd>Ctrl</kbd> キーを押しながら <kbd>V</kbd> キーを押して、貼り付けます。" : "コピーできませんでした。もう一度、ボタンをクリックしてください。");
+    });
+  });
+  shotRefresh();
+
   $("convert").addEventListener("click", function(){ if (canConvert()) run(); });
   $("reset").addEventListener("click", function(){ location.reload(); });
   refresh();
